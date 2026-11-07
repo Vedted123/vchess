@@ -165,6 +165,42 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 #move-list{position:relative}
 .move-jump{padding:2px 5px;border:0;border-radius:4px;text-align:left;background:none;color:var(--ink);font:inherit;font-weight:650}
 .move-jump:hover,.move-jump[aria-current=step]{background:#30415a}
+.arcade-options{display:flex;align-items:center;gap:12px;margin:0 0 18px}
+.arcade-options label,.royale-actions label{color:var(--muted);font-size:13px;font-weight:700}
+.arcade-options select,.royale-actions select{width:auto;max-width:100%}
+#guest-play{margin-top:8px}
+#minigame-dialog{width:min(450px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto}
+#minigame-dialog h2{margin:5px 0 8px}
+#minigame-progress{min-height:20px;color:#b8d6ff;font-weight:700}
+.arcade-grid{display:grid;gap:5px;margin:12px auto;width:min(100%,330px)}
+.arcade-grid button{min-width:0;aspect-ratio:1;border:1px solid #425a7a;border-radius:7px;background:#253b58;color:#edf5ff;font-size:clamp(15px,4vw,26px);font-weight:800;cursor:pointer}
+.arcade-grid button:disabled{opacity:1;cursor:default}
+.arcade-grid button.revealed{background:#111d2f}
+.arcade-grid button.flash{outline:3px solid #fff;filter:brightness(1.65)}
+#minigame-area canvas{display:block;margin:auto;max-width:100%;height:auto;border:1px solid #425a7a;border-radius:10px;touch-action:none}
+.arcade-controls{display:flex;justify-content:center;gap:8px;margin:10px 0}
+.royale-room{background:#141f32;border:1px solid #31435e;border-radius:16px;padding:clamp(10px,2.5vw,22px)}
+.royale-heading,.royale-actions,.royale-meter{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.royale-heading{margin-bottom:12px}
+.royale-heading h2,.royale-heading p{margin:0}
+.royale-actions label{display:flex;align-items:center;gap:8px}
+#royale-board{display:block;width:100%;height:auto;background:#172b43;border:1px solid #516786;border-radius:10px;touch-action:manipulation}
+#royale-board:focus-visible{outline:3px solid #bf9aff}
+.royale-player{padding:9px 0}
+.royale-meter{font-size:13px;margin-bottom:6px;color:#dfeaff}
+.royale-meter progress{width:80px;accent-color:#b889fc;vertical-align:middle}
+.royale-hand{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+.royale-card{min-width:0;padding:5px 2px;border:1px solid #475b78;border-radius:8px;background:#23334f;color:#eef4ff;cursor:pointer;font:inherit}
+.royale-card:disabled{opacity:.45;cursor:default}
+.royale-card[aria-pressed=true]{border-color:#e2c2ff;box-shadow:0 0 0 2px #b889fc;background:#49366f}
+.royale-card .royale-icon{display:block;font-size:24px;line-height:1.15}
+.royale-card small{display:block;font-size:10px;line-height:1.15;overflow-wrap:anywhere}
+.royale-card .royale-cost{color:#e0baff;font-weight:bold}
+#royale-status{font-size:14px;min-height:20px;margin:5px 0 8px}
+.royale-guide{color:var(--muted);font-size:13px}
+.royale-guide summary{cursor:pointer}
+.royale-guide ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:7px 20px;padding-left:20px}
+@media(max-width:560px){.royale-hand{grid-template-columns:repeat(4,minmax(0,1fr))}.arcade-options{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -181,6 +217,7 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
     <button class="button primary" id="auth-submit">Sign in</button>
   </form>
   <button id="switch-auth" class="text-button">Create an account</button>
+  <button id="guest-play" class="button subtle" type="button">Play locally as guest</button>
   </section>
 </main>
 <div id="game-screen" hidden>
@@ -211,7 +248,29 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
     <button class="tab active" id="local-tab" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3v18M3 12h18"/></svg> Local play</button>
     <button class="tab" id="online-tab" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg> Play online</button>
   </nav>
-  <div class="layout">
+  <div id="local-options" class="arcade-options" hidden>
+    <label for="local-variant">Local variant</label>
+    <select id="local-variant">
+      <option value="classic">Classic Chess</option>
+      <option value="minigame">Random Minigame Chess</option>
+      <option value="royale">Chess Royale</option>
+    </select>
+  </div>
+  <section id="royale-room" class="royale-room" aria-label="Chess Royale" hidden>
+    <header class="royale-heading">
+      <div><p class="eyebrow">REAL-TIME STRATEGY</p><h2>Chess Royale</h2></div>
+      <div class="royale-actions">
+        <label>Opponent <select id="royale-opponent"><option value="cpu">Computer</option><option value="local">Two local players</option></select></label>
+        <button class="button primary" id="royale-start" type="button">Start battle</button>
+      </div>
+    </header>
+    <div id="royale-black" class="royale-player"></div>
+    <canvas id="royale-board" width="960" height="540" tabindex="0" aria-label="32 by 18 battle arena. Use arrow keys to move the placement cursor and Enter to deploy."></canvas>
+    <div id="royale-white" class="royale-player"></div>
+    <p id="royale-status" role="status">Start a battle, select a card, and choose a tile.</p>
+    <details class="royale-guide"><summary>Card stats and controls</summary><div id="royale-guide"></div></details>
+  </section>
+  <div class="layout" id="chess-layout">
     <section class="table-panel" aria-label="Chess table">
       <div class="player" id="top-player"></div>
       <div id="board" class="board" aria-label="Chessboard"></div>
@@ -310,6 +369,17 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
   <h2>Promote your pawn</h2>
   <p>Choose a piece to finish your move.</p>
   <div id="promotion-options" class="game-actions"></div>
+</dialog>
+<dialog id="minigame-dialog" aria-labelledby="minigame-title">
+  <p id="minigame-turn" class="eyebrow"></p>
+  <h2 id="minigame-title"></h2>
+  <p id="minigame-goal"></p>
+  <div id="minigame-area"></div>
+  <p id="minigame-progress" role="status"></p>
+  <div class="game-actions">
+    <button id="minigame-start" class="button primary" type="button">Start challenge</button>
+    <button id="minigame-forfeit" class="button subtle" type="button">Forfeit challenge</button>
+  </div>
 </dialog>
 <noscript><p class="shell">Enable JavaScript to play chess.</p></noscript>
 <script>
@@ -18090,6 +18160,995 @@ FIREBASE: `));
     predator: "The Diddy replaces the queen. If it has a legal capture of a pawn, knight, or bishop, you must make one of those captures unless your king is in check. Only a king can capture a Diddy, which wins immediately. Pawns promote to a rook, bishop, or knight.",
     fog: "You have one minute to swap pieces on your two home ranks. Keep your king on its back rank. Enemy pieces stay hidden until captured. Coordinate notation conceals the moving piece. Castling is off."
   }, avatars = { rook: "\u265C", knight: "\u265E", queen: "\u265B", bishop: "\u265D", pawn: "\u265F" }, positions = /* @__PURE__ */ new Map();
+  // Local variants share the existing chessboard and move history.
+  const arcadeRandom = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+  const arcadePick = (items) => items[arcadeRandom(0, items.length - 1)];
+  const colorName = (color) => color === "w" ? "White" : "Black";
+  const otherColor = (color) => color === "w" ? "b" : "w";
+  let guest = false, localVariant = "classic", royaleOpen = false, arcade = null;
+  let stopMinigame = null;
+  const arcadeStartTime = 5 * 60 * 1000;
+  const minigameDialog = $("minigame-dialog");
+
+  function nextArcadeInterval(turn) {
+    const chosen = arcadePick(["w", "b"]);
+    return chosen === turn ? 4 : arcadePick([3, 5]);
+  }
+  function createArcade() {
+    return { next: nextArcadeInterval("w"), w: arcadeStartTime, b: arcadeStartTime, at: Date.now() };
+  }
+  function arcadeRemaining(color, at = Date.now()) {
+    const running = !arcade.pending && !localOutcome && color === local.turn();
+    return Math.max(0, arcade[color] - (running ? Math.max(0, at - arcade.at) : 0));
+  }
+  function flagArcade() {
+    if (!arcade || localOutcome || arcadeRemaining(local.turn()) > 0) return false;
+    arcade[local.turn()] = 0;
+    finishLocal(`${colorName(otherColor(local.turn()))} wins on time`);
+    return true;
+  }
+  function closeMinigame() {
+    stopMinigame?.();
+    stopMinigame = null;
+    if (minigameDialog.open) minigameDialog.close();
+  }
+  function localLegalMoves(chess, variant) {
+    const moves = legalMoves(chess, variant);
+    if (mode !== "local" || !arcade?.forced || chess.isCheck()) return moves;
+    return moves.filter((move) => encodeMove(move) === arcade.forced);
+  }
+  function advanceArcade(move) {
+    const at = Date.now();
+    arcade[move.color] = arcadeRemaining(move.color, at) + 2000;
+    arcade.at = at;
+    arcade.forced = null;
+    arcade.message = "";
+  }
+  function scheduleMinigame() {
+    if (!arcade || --arcade.next > 0) return;
+    arcade.next = nextArcadeInterval(local.turn());
+    if (local.isCheck()) {
+      arcade.message = "Challenge skipped while the king is in check.";
+      return;
+    }
+    const kind = arcadePick(Object.keys(minigames));
+    arcade.pending = { kind, goal: minigames[kind].goal() };
+  }
+  function resolveMinigame(won) {
+    if (!arcade?.pending) return;
+    const name = minigames[arcade.pending.kind].name;
+    closeMinigame();
+    arcade.pending = null;
+    arcade.at = Date.now();
+    const forced = won || local.isCheck() ? null : arcadePick(legalMoves(local));
+    arcade.forced = forced ? encodeMove(forced) : null;
+    arcade.message = won ? `${name} cleared. Choose any legal move.` : forced
+      ? `${name} missed. ${colorName(local.turn())} must play ${forced.san} (${forced.from} → ${forced.to}${forced.promotion ? `, promote to ${pieceNames[forced.promotion]}` : ""}).`
+      : `${name} missed. Play any legal check escape.`;
+    rememberLocal();
+    renderGame();
+  }
+  function presentMinigame() {
+    if (mode !== "local" || page !== "play" || royaleOpen || !arcade?.pending || localOutcome || minigameDialog.open) return;
+    const { kind, goal } = arcade.pending;
+    const game = minigames[kind];
+    $("minigame-turn").textContent = `${colorName(local.turn())}’s challenge · Chess clocks paused`;
+    $("minigame-title").textContent = game.name;
+    $("minigame-goal").textContent = game.describe(goal);
+    $("minigame-progress").textContent = "";
+    $("minigame-area").replaceChildren();
+    $("minigame-start").hidden = false;
+    minigameDialog.showModal();
+  }
+  minigameDialog.addEventListener("cancel", (event) => event.preventDefault());
+  $("minigame-start").addEventListener("click", () => {
+    if (!arcade?.pending || stopMinigame) return;
+    const { kind, goal } = arcade.pending;
+    $("minigame-start").hidden = true;
+    stopMinigame = playMinigame(minigames[kind], goal);
+  });
+  $("minigame-forfeit").addEventListener("click", () => resolveMinigame(false));
+
+  function startLocalChess(variant = localVariant) {
+    if (local.history().length && !localOutcome && !local.isGameOver() && !confirm("Start a new local game?")) return false;
+    closeMinigame();
+    local.reset();
+    localOutcome = "";
+    localDraw = false;
+    localStartedAt = undefined;
+    selected = null;
+    localVariant = variant;
+    arcade = variant === "minigame" ? createArcade() : null;
+    rememberLocal();
+    renderGame();
+    return true;
+  }
+  function renderLocalOptions() {
+    const isLocal = mode === "local";
+    $("local-options").hidden = !isLocal;
+    $("local-variant").value = royaleOpen ? "royale" : localVariant;
+    $("chess-layout").hidden = isLocal && royaleOpen;
+    $("royale-room").hidden = !isLocal || !royaleOpen;
+    if (isLocal && royaleOpen) renderRoyale();
+  }
+  $("local-variant").addEventListener("change", (event) => {
+    const variant = event.target.value;
+    royaleOpen = variant === "royale";
+    if (!royaleOpen && variant !== localVariant) startLocalChess(variant);
+    renderGame();
+  });
+
+  function showGuest() {
+    guest = true;
+    restoreLocal();
+    localHistory = savedLocalHistory();
+    $("auth-screen").hidden = true;
+    $("game-screen").hidden = false;
+    $("menu-toggle").hidden = true;
+    $("online-tab").hidden = true;
+    $("account-avatar").hidden = true;
+    $("account-rating").hidden = true;
+    $("account-name").textContent = "Guest";
+    $("account-button").textContent = "Sign in";
+    goTo("play");
+    changeMode("local");
+  }
+  $("guest-play").addEventListener("click", showGuest);
+  function leaveGuest() {
+    guest = false;
+    closeMinigame();
+    arcade = null;
+    localVariant = "classic";
+    resetRoyale();
+    $("menu-toggle").hidden = false;
+    $("online-tab").hidden = false;
+    $("account-avatar").hidden = false;
+    $("account-rating").hidden = false;
+    $("account-button").textContent = "Sign out";
+    $("game-screen").hidden = true;
+    $("auth-screen").hidden = false;
+    $("username").focus();
+  }
+
+  const miniArea = $("minigame-area");
+  const miniProgress = $("minigame-progress");
+  function miniButton(label, action, container = miniArea) {
+    const button = node2("button", "button primary", label);
+    button.type = "button";
+    button.addEventListener("click", action);
+    container.append(button);
+    return button;
+  }
+  function miniGrid(rows, columns, action) {
+    const grid = node2("div", "arcade-grid");
+    grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    const cells = Array.from({ length: rows * columns }, (_, i) => {
+      const cell = node2("button", "", "");
+      cell.type = "button";
+      cell.setAttribute("aria-label", `Row ${Math.floor(i / columns) + 1}, column ${i % columns + 1}`);
+      cell.addEventListener("click", () => action(i));
+      grid.append(cell);
+      return cell;
+    });
+    miniArea.append(grid);
+    return cells;
+  }
+  function miniCanvas(width, height, label) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    canvas.setAttribute("aria-label", label);
+    miniArea.append(canvas);
+    return canvas.getContext("2d");
+  }
+  function playMinigame(game, goal) {
+    const controller = new AbortController();
+    let started = performance.now(), hiddenAt = null;
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) hiddenAt = performance.now();
+      else if (hiddenAt !== null) {
+        started += performance.now() - hiddenAt;
+        hiddenAt = null;
+      }
+    }, { signal: controller.signal });
+    const limit = game.limit(goal);
+    let frame, stopped = false, progress = "";
+    function stop() {
+      stopped = true;
+      controller.abort();
+      cancelAnimationFrame(frame);
+    }
+    function finish(won) {
+      if (stopped) return;
+      stop();
+      resolveMinigame(won);
+    }
+    function elapsed() {
+      return (performance.now() - started) / 1000;
+    }
+    const update = game.play({ goal, finish, progress: (message) => { progress = message; }, signal: controller.signal, elapsed });
+    function step() {
+      if (stopped) return;
+      const seconds = elapsed();
+      if (seconds >= limit) {
+        finish(game.survival === true);
+        return;
+      }
+      update?.(seconds);
+      if (stopped) return;
+      const message = `${progress ? progress + " · " : ""}${Math.ceil(limit - seconds)}s left`;
+      if (miniProgress.textContent !== message) miniProgress.textContent = message;
+      frame = requestAnimationFrame(step);
+    }
+    frame = requestAnimationFrame(step);
+    return stop;
+  }
+
+  const minigames = {
+    clicker: {
+      name: "Clicker",
+      goal: () => ({ clicks: arcadePick([25, 30, 40, 45]), seconds: arcadePick([12, 15, 18]) }),
+      describe: ({ clicks, seconds }) => `Press the button ${clicks} times in ${seconds} seconds.`,
+      limit: ({ seconds }) => seconds,
+      play({ goal, finish, progress }) {
+        let hits = 0;
+        const button = miniButton("Click!", () => {
+          progress(`${++hits} / ${goal.clicks} clicks`);
+          if (hits >= goal.clicks) finish(true);
+        });
+        progress(`0 / ${goal.clicks} clicks`);
+        button.addEventListener("keydown", (event) => {
+          if (event.repeat) event.preventDefault();
+        });
+        button.focus();
+      }
+    },
+    darts: {
+      name: "Darts",
+      goal: () => arcadePick([50, 60, 75, 90]),
+      describe: (goal) => `Score at least ${goal} points in five throws. Press Throw to stop the moving aim marker.`,
+      limit: () => 25,
+      play({ goal, finish, progress, elapsed }) {
+        const ctx = miniCanvas(300, 240, "Dartboard with moving aim marker");
+        const aim = (time) => ({ x: 150 + 91 * Math.sin(time * 3.15), y: 120 + 85 * Math.sin(time * 4.35 + 1.5) });
+        let total = 0, shots = [];
+        function ring(x, y, radius, color) {
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        miniButton("Throw", () => {
+          const point = aim(elapsed());
+          const distance = Math.hypot(point.x - 150, point.y - 120);
+          total += distance <= 19 ? 25 : distance <= 45 ? 20 : distance <= 72 ? 15 : distance <= 99 ? 10 : 0;
+          shots.push(point);
+          progress(`${total} / ${goal} points · ${shots.length} / 5 throws`);
+          if (total >= goal || shots.length === 5) finish(total >= goal);
+        }).focus();
+        progress(`0 / ${goal} points · 0 / 5 throws`);
+        return (time) => {
+          ctx.fillStyle = "#101a2b";
+          ctx.fillRect(0, 0, 300, 240);
+          for (const [radius, color, score] of [[99, "#417863", 10], [72, "#deb966", 15], [45, "#d86a68", 20], [19, "#7d304c", 25]]) {
+            ring(150, 120, radius, color);
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 11px system-ui";
+            ctx.textAlign = "center";
+            ctx.fillText(score, 150, 132 - radius);
+          }
+          for (const shot of shots) ring(shot.x, shot.y, 3, "#181421");
+          const point = aim(time);
+          ring(point.x, point.y, 7, "#131b2c");
+          ring(point.x, point.y, 4, "#fff");
+        };
+      }
+    },
+    mines: {
+      name: "Minesweeper",
+      goal: () => arcadePick([2, 3, 4]),
+      describe: (goal) => `Find and flag ${goal} mines. Numbers count neighboring mines, including diagonals. A wrong flag or opening a mine ends the challenge.`,
+      limit: () => 35,
+      play({ goal, finish, progress }) {
+        const size = 5;
+        const indices = Array.from({ length: size * size }, (_, i) => i);
+        const mines = new Set();
+        while (mines.size < 5) mines.add(arcadePick(indices));
+        const marked = new Set(), revealed = new Set();
+        let flagMode = true;
+        const neighbors = (i) => indices.filter((j) => i !== j &&
+          Math.abs(i % size - j % size) <= 1 && Math.abs(Math.floor(i / size) - Math.floor(j / size)) <= 1);
+        const toggle = miniButton("Flag mode · switch to Reveal", () => {
+          flagMode = !flagMode;
+          toggle.textContent = flagMode ? "Flag mode · switch to Reveal" : "Reveal mode · switch to Flag";
+        });
+        function reveal(i) {
+          if (revealed.has(i) || marked.has(i)) return;
+          revealed.add(i);
+          const count = neighbors(i).filter((j) => mines.has(j)).length;
+          cells[i].textContent = String(count);
+          cells[i].setAttribute("aria-label", `${cells[i].getAttribute("aria-label")}, ${count} neighboring mines`);
+          cells[i].classList.add("revealed");
+          cells[i].disabled = true;
+          if (count === 0) neighbors(i).forEach(reveal);
+        }
+        const cells = miniGrid(size, size, (i) => {
+          if (marked.has(i) || revealed.has(i)) return;
+          if (flagMode !== mines.has(i)) return finish(false);
+          if (!flagMode) return reveal(i);
+          marked.add(i);
+          cells[i].textContent = "⚑";
+          cells[i].disabled = true;
+          progress(`${marked.size} / ${goal} mines flagged`);
+          if (marked.size === goal) finish(true);
+        });
+        // Reveal a varied set of clues, including a safe neighbor of each mine.
+        for (const mine of mines) {
+          const safe = neighbors(mine).filter((i) => !mines.has(i));
+          if (safe.length) reveal(arcadePick(safe));
+        }
+        function deductMines() {
+          const certainMines = new Set(), certainSafe = new Set(revealed);
+          let previous = 0;
+          while (certainMines.size + certainSafe.size !== previous) {
+            previous = certainMines.size + certainSafe.size;
+            for (const clue of revealed) {
+              const around = neighbors(clue);
+              const unknown = around.filter((i) => !certainMines.has(i) && !certainSafe.has(i));
+              const remaining = around.filter((i) => mines.has(i)).length - around.filter((i) => certainMines.has(i)).length;
+              if (remaining === 0) unknown.forEach((i) => certainSafe.add(i));
+              else if (remaining === unknown.length) unknown.forEach((i) => certainMines.add(i));
+            }
+          }
+          return certainMines.size;
+        }
+        while (revealed.size < indices.length - mines.size && (revealed.size < 13 || deductMines() < goal)) {
+          reveal(arcadePick(indices.filter((i) => !mines.has(i) && !revealed.has(i))));
+        }
+        progress(`0 / ${goal} mines flagged`);
+      }
+    },
+    memory: {
+      name: "Memory",
+      goal: () => arcadePick([3, 4, 5, 6]),
+      describe: (goal) => `Clear ${goal} levels. Watch the tiles flash, then repeat the sequence. Each level adds one tile.`,
+      limit: (goal) => goal * 10,
+      play({ goal, finish, progress, elapsed }) {
+        const sequence = [];
+        const colors = ["#934542", "#30795a", "#345eaa", "#987135"];
+        let entered = 0, startAt = 0, accepting = false;
+        const cells = miniGrid(2, 2, (i) => {
+          if (!accepting) return;
+          if (i !== sequence[entered++]) return finish(false);
+          if (entered === sequence.length) {
+            if (sequence.length === goal) return finish(true);
+            nextLevel();
+          }
+        });
+        cells.forEach((cell, i) => {
+          cell.textContent = i + 1;
+          cell.style.background = colors[i];
+        });
+        function nextLevel() {
+          sequence.push(arcadeRandom(0, 3));
+          entered = 0;
+          accepting = false;
+          startAt = elapsed() + .4;
+          cells.forEach((cell) => { cell.disabled = true; });
+          progress(`Level ${sequence.length} / ${goal} · Watch`);
+        }
+        nextLevel();
+        return (time) => {
+          const playing = (time - startAt) / .65;
+          const index = Math.floor(playing);
+          const flashing = index >= 0 && playing - index < .63 ? sequence[index] : undefined;
+          cells.forEach((cell, i) => cell.classList.toggle("flash", i === flashing));
+          if (!accepting && index >= sequence.length) {
+            accepting = true;
+            cells.forEach((cell) => { cell.disabled = false; });
+            progress(`Level ${sequence.length} / ${goal} · Repeat`);
+          }
+        };
+      }
+    },
+    tictactoe: {
+      name: "Tic-tac-toe",
+      goal: () => null,
+      describe: () => "Play as X. Beat or draw the computer to clear the challenge.",
+      limit: () => 45,
+      play({ finish, progress }) {
+        const values = Array(9).fill("");
+        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        const wins = (mark) => lines.some((line) => line.every((i) => values[i] === mark));
+        const open = () => values.flatMap((mark, i) => mark ? [] : [i]);
+        const tactic = (mark) => open().find((i) => lines.some((line) => line.includes(i) &&
+          line.every((j) => i === j || values[j] === mark)));
+        function place(i, mark) {
+          values[i] = mark;
+          cells[i].textContent = mark;
+          cells[i].disabled = true;
+        }
+        const cells = miniGrid(3, 3, (i) => {
+          place(i, "X");
+          if (wins("X") || !open().length) return finish(true);
+          place(tactic("O") ?? tactic("X") ?? arcadePick(open()), "O");
+          if (wins("O")) finish(false);
+        });
+        progress("Your turn · X");
+      }
+    },
+    pinball: {
+      name: "Pinball",
+      goal: () => arcadePick([10, 14, 18, 22]),
+      describe: (goal) => `Keep the ball alive for ${goal} seconds. Use the left or right flipper as the ball reaches it. Arrow keys and the buttons work.`,
+      limit: (goal) => goal,
+      survival: true,
+      play({ finish, progress, elapsed, signal }) {
+        const width = 300, height = 310;
+        const ctx = miniCanvas(width, height, "Pinball table");
+        const controls = node2("div", "arcade-controls");
+        miniArea.append(controls);
+        const ball = { x: 150, y: 107, vx: arcadePick([-75, 75]), vy: -45 };
+        const bumpers = [{ x: 78, y: 104 }, { x: 222, y: 104 }, { x: 150, y: 59 }];
+        const flippers = [0, 0];
+        function flip(side) {
+          flippers[side] = elapsed() + .34;
+        }
+        miniButton("← Left flipper", () => flip(0), controls).focus();
+        miniButton("Right flipper →", () => flip(1), controls);
+        window.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          if (!event.repeat) flip(event.key === "ArrowLeft" ? 0 : 1);
+        }, { signal });
+        let previous = 0, saves = 0;
+        function circle(x, y, radius, color) {
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
+        return (time) => {
+          const dt = Math.min(.035, time - previous);
+          previous = time;
+          ball.vy += 245 * dt;
+          ball.x += ball.vx * dt;
+          ball.y += ball.vy * dt;
+          if (ball.x < 9 || ball.x > width - 9) {
+            ball.x = Math.max(9, Math.min(width - 9, ball.x));
+            ball.vx *= -1;
+          }
+          if (ball.y < 9) {
+            ball.y = 9;
+            ball.vy = Math.abs(ball.vy);
+          }
+          for (const bumper of bumpers) {
+            const dx = ball.x - bumper.x, dy = ball.y - bumper.y, d = Math.hypot(dx, dy);
+            if (d > 0 && d < 25) {
+              ball.x = bumper.x + dx * 25 / d;
+              ball.y = bumper.y + dy * 25 / d;
+              ball.vx = dx * 160 / d;
+              ball.vy = dy * 225 / d;
+            }
+          }
+          const side = ball.x < width / 2 ? 0 : 1;
+          if (ball.y >= 247 && ball.y < 289 && ball.vy > 0 && flippers[side] >= time) {
+            ball.vx = side === 0 ? 78 : -78;
+            ball.vy = -300;
+            progress(`${++saves} flipper saves`);
+          }
+          if (ball.y > height + 9) return finish(false);
+          ctx.fillStyle = "#121e34";
+          ctx.fillRect(0, 0, width, height);
+          ctx.fillStyle = "#30496d";
+          ctx.fillRect(0, 247, width, 42);
+          for (const bumper of bumpers) circle(bumper.x, bumper.y, 18, "#9976dd");
+          for (let i = 0; i < 2; i++) {
+            const active = flippers[i] >= time;
+            ctx.strokeStyle = active ? "#ffd97e" : "#7896bd";
+            ctx.lineWidth = 9;
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(i === 0 ? 15 : 285, 281);
+            ctx.lineTo(i === 0 ? 131 : 169, active ? 253 : 296);
+            ctx.stroke();
+          }
+          circle(ball.x, ball.y, 7, "#f5f9ff");
+        };
+      }
+    }
+  };
+
+  const royaleCanvas = $("royale-board");
+  const royaleCtx = royaleCanvas.getContext("2d");
+  const arenaWidth = 32, arenaHeight = 18, tile = 30;
+  const royaleColors = { w: "#65cbff", b: "#ff818a" };
+  const royaleCards = {
+    tower: { name: "Chess Tower", icon: "♜", cost: 4, info: "1,200 HP · 4-tile beam · 30 DPS + 250 every 1.2s on one target · lasts 30s" },
+    pawns: { name: "Pawn Army", icon: "♟", cost: 3, info: "15 pawns · 81 HP and 81 DPS each" },
+    knight: { name: "Knight", icon: "♞", cost: 2, info: "700 HP · 100 melee DPS · 136 splash damage on jumps from 4–7 tiles · 2.2s jump cooldown" },
+    bishop: { name: "Bishop", icon: "♝", cost: 4, info: "750 HP · 217 damage every 2s · 5-tile range" },
+    rooks: { name: "Rook Pair", icon: "♜", cost: 5, info: "2 rooks · 1,341 HP each · 274 damage every 1.4s each" },
+    roller: { name: "Rolling Pawn", icon: "▰", cost: 2, info: "3 tiles across × 1 deep · rolls 9 tiles · 250 troop damage plus knockback" },
+    rocket: { name: "Bishop Rocket", icon: "➶", cost: 5, info: "Place anywhere · 900 troop damage · 400 damage to crown towers · 1.6-tile blast" },
+    queen: { name: "Queen", icon: "♛", cost: 6, info: "1,500 HP · 1,000 damage every 2s · melee" }
+  };
+  const royaleTroops = {
+    pawn: { icon: "♟", hp: 81, damage: 81, period: 1, range: .9, speed: 2.5, sight: 5, radius: .24 },
+    knight: { icon: "♞", hp: 700, damage: 100, period: 1, range: 1.1, speed: 2, sight: 7, radius: .43 },
+    bishop: { icon: "♝", hp: 750, damage: 217, period: 2, range: 5, speed: 1.6, sight: 6, radius: .44 },
+    rook: { icon: "♜", hp: 1341, damage: 274, period: 1.4, range: 1.15, speed: 1.25, sight: 5, radius: .54 },
+    queen: { icon: "♛", hp: 1500, damage: 1000, period: 2, range: 1.2, speed: 1.7, sight: 6, radius: .53 },
+    beam: { icon: "♜", hp: 1200, range: 4, radius: .65 },
+    side: { icon: "♜", hp: 3052, damage: 136, period: 1, range: 5, radius: .85 },
+    king: { icon: "♚", hp: 4500, damage: 150, period: 1, range: 5, radius: 1 }
+  };
+  let battle = null, royaleFrame = 0, lastRoyaleFrame = null, accumulator = 0;
+  let activeCard = null, cursor = null;
+  const royaleUI = {};
+
+  function buildRoyaleUI() {
+    const guide = $("royale-guide");
+    guide.append(node2("p", "", "Select a card, then choose a tile. The blue player deploys on the bottom half and the red player deploys on the top half. Destroy the enemy king tower to win. Each side starts with 5 elixir, gains 1 every 2.8 seconds, and can bank up to 10."));
+    guide.append(node2("p", "", "Rook towers have 3,052 HP and fire rocks for 136 DPS. King towers have 4,500 HP and fire for 150 DPS. Both have a 5-tile range. With a keyboard, focus the arena and use the arrow keys and Enter."));
+    const list = node2("ul", "");
+    for (const card of Object.values(royaleCards)) {
+      list.append(node2("li", "", `${card.name} (${card.cost}) · ${card.info}`));
+    }
+    guide.append(list);
+    for (const side of ["b", "w"]) {
+      const row = $(side === "w" ? "royale-white" : "royale-black");
+      const meter = node2("div", "royale-meter");
+      const name = node2("strong", "");
+      name.style.color = royaleColors[side];
+      const elixir = node2("span", "");
+      const bar = node2("progress", "");
+      bar.max = 10;
+      bar.setAttribute("aria-label", `${colorName(side)} elixir`);
+      meter.append(name, elixir, bar);
+      const hand = node2("div", "royale-hand");
+      const buttons = {};
+      for (const [key, card] of Object.entries(royaleCards)) {
+        const button = node2("button", "royale-card");
+        button.type = "button";
+        button.title = card.info;
+        button.setAttribute("aria-label", `${colorName(side)} ${card.name}, ${card.cost} elixir`);
+        button.append(node2("span", "royale-icon", card.icon), node2("small", "", card.name), node2("small", "royale-cost", String(card.cost)));
+        button.addEventListener("click", () => {
+          activeCard = activeCard?.key === key && activeCard.side === side ? null : { side, key };
+          cursor = { x: 15.5, y: side === "w" ? 12.5 : 5.5 };
+          updateRoyaleUI();
+          drawRoyale();
+          if (activeCard) royaleCanvas.focus({ preventScroll: true });
+        });
+        hand.append(button);
+        buttons[key] = button;
+      }
+      row.append(meter, hand);
+      royaleUI[side] = { name, elixir, bar, hand, buttons };
+    }
+  }
+
+  function royaleStatus(message) {
+    if ($("royale-status").textContent !== message) $("royale-status").textContent = message;
+  }
+  function updateRoyaleUI() {
+    const cpu = (battle?.opponent ?? $("royale-opponent").value) === "cpu";
+    for (const side of ["w", "b"]) {
+      const ui = royaleUI[side];
+      const isCpu = cpu && side === "b";
+      const elixir = battle?.elixir[side] ?? 5;
+      ui.name.textContent = side === "w" ? "White · Blue" : isCpu ? "Black · Computer" : "Black · Red";
+      ui.elixir.textContent = `${elixir} / 10 elixir`;
+      ui.bar.value = elixir;
+      ui.hand.hidden = isCpu;
+      for (const [key, button] of Object.entries(ui.buttons)) {
+        button.disabled = !battle || !!battle.result || isCpu || elixir < royaleCards[key].cost;
+        button.setAttribute("aria-pressed", String(activeCard?.side === side && activeCard.key === key));
+      }
+    }
+    $("royale-start").textContent = battle && !battle.result ? "Restart battle" : "Start battle";
+  }
+  function createRoyaleBattle(opponent) {
+    const state = { time: 0, elixir: { w: 5, b: 5 }, nextElixir: 2.8, nextAI: 1.6, entities: [], effects: [], result: "", opponent };
+    for (const side of ["w", "b"]) {
+      spawnRoyale(state, "king", side, 16, side === "w" ? 16.6 : 1.4);
+      for (const x of [7.5, 24.5]) spawnRoyale(state, "side", side, x, side === "w" ? 14.8 : 3.2);
+    }
+    return state;
+  }
+  function spawnRoyale(state, type, side, x, y) {
+    const stats = royaleTroops[type];
+    const unit = {
+      type, side, stats, hp: stats.hp, x, y, ready: state.time + .25,
+      expires: type === "beam" ? state.time + 30 : Infinity
+    };
+    state.entities.push(unit);
+    return unit;
+  }
+  function resetRoyale() {
+    battle = null;
+    activeCard = null;
+    cursor = null;
+    royaleOpen = false;
+    lastRoyaleFrame = null;
+    accumulator = 0;
+    cancelAnimationFrame(royaleFrame);
+    royaleFrame = 0;
+    royaleStatus("Start a battle, select a card, and choose a tile.");
+  }
+  $("royale-start").addEventListener("click", () => {
+    if (battle && !battle.result && !confirm("Restart this battle?")) return;
+    battle = createRoyaleBattle($("royale-opponent").value);
+    activeCard = null;
+    cursor = null;
+    accumulator = 0;
+    royaleStatus("Select a card, then choose a tile to deploy it.");
+    renderRoyale();
+  });
+  $("royale-opponent").addEventListener("change", () => {
+    if (battle && battle.opponent !== $("royale-opponent").value) {
+      royaleStatus("Start a new battle to switch opponents.");
+    }
+    updateRoyaleUI();
+  });
+
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  const arenaDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  const crownTower = (unit) => unit.type === "side" || unit.type === "king";
+  function canDeploy(state, side, key, x, y) {
+    if (!state || state.result || state.elixir[side] < royaleCards[key].cost ||
+        x < 0 || x >= arenaWidth || y < 0 || y >= arenaHeight) return false;
+    if (key === "rocket") return true;
+    if ((y >= arenaHeight / 2) !== (side === "w")) return false;
+    return key !== "tower" || !state.entities.some((unit) => unit.hp > 0 && !unit.stats.speed &&
+      arenaDistance(unit, { x, y }) < unit.stats.radius + .65);
+  }
+  function deployRoyale(state, side, key, x, y) {
+    if (!canDeploy(state, side, key, x, y)) return false;
+    state.elixir[side] -= royaleCards[key].cost;
+    const direction = side === "w" ? -1 : 1;
+    if (key === "rocket") {
+      state.effects.push({ kind: "rocket", side, x, y, start: state.time, end: state.time + .6 });
+    } else if (key === "roller") {
+      state.effects.push({ kind: "roller", side, x, y, from: y, direction, hit: new Set(), start: state.time, end: state.time + .9 });
+    } else {
+      const offsets = key === "pawns" ? Array.from({ length: 15 }, (_, i) => [(i % 5 - 2) * .49, (Math.floor(i / 5) - 1) * .49])
+        : key === "rooks" ? [[-.55, 0], [.55, 0]] : [[0, 0]];
+      const type = { pawns: "pawn", rooks: "rook", tower: "beam" }[key] ?? key;
+      for (const [dx, dy] of offsets) {
+        spawnRoyale(state, type, side, clamp(x + dx, .25, arenaWidth - .25),
+          clamp(y + dy, side === "w" ? 9.24 : .25, side === "w" ? 17.75 : 8.76));
+      }
+    }
+    return true;
+  }
+  function placeSelected() {
+    if (!activeCard || !cursor) {
+      royaleStatus("Select a card first.");
+      return;
+    }
+    const { key, side } = activeCard;
+    if (!deployRoyale(battle, side, key, cursor.x, cursor.y)) {
+      royaleStatus(key === "rocket" ? "That card is unavailable." : "Choose a clear tile on your own half.");
+      return;
+    }
+    activeCard = null;
+    royaleStatus(`${colorName(side)} deployed ${royaleCards[key].name}.`);
+    updateRoyaleUI();
+    drawRoyale();
+  }
+  function pointerTile(event) {
+    const bounds = royaleCanvas.getBoundingClientRect();
+    return {
+      x: clamp(Math.floor((event.clientX - bounds.left) * arenaWidth / bounds.width), 0, arenaWidth - 1) + .5,
+      y: clamp(Math.floor((event.clientY - bounds.top) * arenaHeight / bounds.height), 0, arenaHeight - 1) + .5
+    };
+  }
+  royaleCanvas.addEventListener("pointermove", (event) => {
+    if (activeCard) {
+      cursor = pointerTile(event);
+      drawRoyale();
+    }
+  });
+  royaleCanvas.addEventListener("click", (event) => {
+    cursor = pointerTile(event);
+    placeSelected();
+  });
+  royaleCanvas.addEventListener("keydown", (event) => {
+    if (!activeCard) return;
+    const direction = { ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0] }[event.key];
+    if (!direction && !["Enter", " ", "Escape"].includes(event.key)) return;
+    event.preventDefault();
+    if (direction) {
+      cursor.x = clamp(cursor.x + direction[0], .5, 31.5);
+      cursor.y = clamp(cursor.y + direction[1], .5, 17.5);
+    } else if (event.key === "Escape") {
+      activeCard = null;
+      updateRoyaleUI();
+    } else placeSelected();
+    drawRoyale();
+  });
+
+  function nearest(unit, candidates, range = Infinity) {
+    let target = null, best = range;
+    for (const enemy of candidates) {
+      const distance = arenaDistance(unit, enemy);
+      if (distance <= best) {
+        target = enemy;
+        best = distance;
+      }
+    }
+    return target;
+  }
+  function advanceRoyaleEffects(state) {
+    for (const effect of state.effects) {
+      if (effect.kind === "rocket" && state.time >= effect.end) {
+        for (const unit of state.entities) {
+          if (unit.side !== effect.side && unit.hp > 0 && arenaDistance(unit, effect) <= 1.6 + unit.stats.radius)
+            unit.hp -= crownTower(unit) ? 400 : 900;
+        }
+        state.effects.push({ ...effect, kind: "blast", start: state.time, end: state.time + .3 });
+      }
+      if (effect.kind === "roller") {
+        const before = effect.y;
+        effect.y = effect.from + 9 * effect.direction * Math.min(1, (state.time - effect.start) / .9);
+        for (const unit of state.entities) {
+          if (unit.side === effect.side || unit.hp <= 0 || !unit.stats.speed || effect.hit.has(unit) ||
+              Math.abs(unit.x - effect.x) > 1.5 + unit.stats.radius ||
+              unit.y < Math.min(before, effect.y) - .5 - unit.stats.radius ||
+              unit.y > Math.max(before, effect.y) + .5 + unit.stats.radius) continue;
+          unit.hp -= 250;
+          unit.y = clamp(unit.y + effect.direction * 1.1, .35, 17.65);
+          effect.hit.add(unit);
+        }
+      }
+    }
+    state.effects = state.effects.filter((effect) => state.time < effect.end);
+  }
+  function advanceRoyaleUnit(state, unit, enemies, dt) {
+    if (unit.hp <= 0) return;
+    const stats = unit.stats;
+    const living = enemies.filter((enemy) => enemy.hp > 0);
+    if (unit.jump) {
+      const jump = unit.jump;
+      const progress = Math.min(1, (state.time - jump.start) / .36);
+      unit.x = jump.fromX + (jump.x - jump.fromX) * progress;
+      unit.y = jump.fromY + (jump.y - jump.fromY) * progress;
+      if (progress === 1) {
+        for (const enemy of living) {
+          if (arenaDistance(unit, enemy) <= 1.05 + enemy.stats.radius) enemy.hp -= 136;
+        }
+        state.effects.push({ kind: "jump", x: unit.x, y: unit.y, start: state.time, end: state.time + .2 });
+        unit.jump = null;
+        unit.jumpReady = state.time + 2.2;
+        unit.ready = state.time + .4;
+      }
+      return;
+    }
+    const troops = living.filter((enemy) => !crownTower(enemy));
+    if (unit.type === "beam") {
+      const target = unit.target && living.includes(unit.target) && arenaDistance(unit, unit.target) <= stats.range
+        ? unit.target : nearest(unit, living, stats.range);
+      if (target !== unit.target) {
+        unit.target = target;
+        unit.lockAt = state.time;
+      }
+      if (target) target.hp -= (30 + 250 * Math.floor((state.time - unit.lockAt) / 1.2)) * dt;
+      return;
+    }
+    const target = stats.speed
+      ? nearest(unit, troops, stats.sight) ?? nearest(unit, living.filter(crownTower))
+      : nearest(unit, troops, stats.range) ?? nearest(unit, living, stats.range);
+    if (!target) return;
+    const distance = arenaDistance(unit, target);
+    const range = stats.range + (stats.speed && stats.range < 2 ? target.stats.radius : 0);
+    if (unit.type === "knight" && distance >= 4 && distance <= 7 && state.time >= (unit.jumpReady ?? 0)) {
+      const offset = Math.min(distance, target.stats.radius + .42);
+      unit.jump = { start: state.time, fromX: unit.x, fromY: unit.y,
+        x: target.x + (unit.x - target.x) * offset / distance, y: target.y + (unit.y - target.y) * offset / distance };
+      return;
+    }
+    if (distance <= range) {
+      if (state.time < unit.ready) return;
+      unit.ready = state.time + stats.period;
+      target.hp -= stats.damage;
+      const kind = crownTower(unit) ? "rock" : stats.range >= 5 ? "shot" : "strike";
+      state.effects.push({ kind, x: target.x, y: target.y, fromX: unit.x, fromY: unit.y, side: unit.side, start: state.time, end: state.time + .22 });
+    } else if (stats.speed) {
+      const step = Math.min(stats.speed * dt, distance - range);
+      unit.x += (target.x - unit.x) / distance * step;
+      unit.y += (target.y - unit.y) / distance * step;
+    }
+  }
+
+  function computerRoyaleTurn(state) {
+    const enemies = state.entities.filter((unit) => unit.side === "w" && unit.hp > 0 && unit.stats.speed);
+    const threats = enemies.filter((unit) => unit.y < 10);
+    const threat = nearest({ x: 16, y: 3 }, threats);
+    const eligible = Object.keys(royaleCards).filter((key) => royaleCards[key].cost <= state.elixir.b);
+    if (!eligible.length) return;
+    const heavy = enemies.find((unit) => unit.hp >= 650 && unit.y < 12);
+    const key = heavy && eligible.includes("rocket") && Math.random() < .35 ? "rocket"
+      : arcadePick(eligible.filter((key) => key !== "rocket" && (key !== "roller" || threat)));
+    const x = threat ? clamp(Math.floor(threat.x) + .5, .5, 31.5) : arcadePick([7.5, 24.5]);
+    if (key === "rocket") deployRoyale(state, "b", key, heavy.x, heavy.y);
+    else deployRoyale(state, "b", key, x, key === "tower" ? 5.5 : key === "roller" ? 2.5 : 7.5);
+  }
+  function stepRoyale(state, dt) {
+    state.time += dt;
+    if (state.time + 1e-8 >= state.nextElixir) {
+      state.nextElixir += 2.8;
+      for (const side of ["w", "b"]) state.elixir[side] = Math.min(10, state.elixir[side] + 1);
+      updateRoyaleUI();
+    }
+    if (state.opponent === "cpu" && state.time >= state.nextAI) {
+      state.nextAI = state.time + arcadeRandom(19, 34) / 10;
+      computerRoyaleTurn(state);
+      updateRoyaleUI();
+    }
+    state.entities = state.entities.filter((unit) => unit.hp > 0 && unit.expires > state.time);
+    advanceRoyaleEffects(state);
+    const white = state.entities.filter((unit) => unit.side === "w");
+    const black = state.entities.filter((unit) => unit.side === "b");
+    for (const unit of state.entities) advanceRoyaleUnit(state, unit, unit.side === "w" ? black : white, dt);
+    const whiteKing = white.some((unit) => unit.type === "king" && unit.hp > 0);
+    const blackKing = black.some((unit) => unit.type === "king" && unit.hp > 0);
+    if (!whiteKing || !blackKing) {
+      state.result = whiteKing ? "White wins · Black king tower destroyed" : blackKing ? "Black wins · White king tower destroyed" : "Draw · Both king towers destroyed";
+      activeCard = null;
+      royaleStatus(state.result);
+      updateRoyaleUI();
+    }
+  }
+  function royaleCircle(x, y, radius, color) {
+    royaleCtx.beginPath();
+    royaleCtx.arc(x * tile, y * tile, radius * tile, 0, Math.PI * 2);
+    royaleCtx.fillStyle = color;
+    royaleCtx.fill();
+  }
+  function drawRoyale() {
+    const ctx = royaleCtx;
+    const width = royaleCanvas.width, height = royaleCanvas.height;
+    ctx.fillStyle = "#372435";
+    ctx.fillRect(0, 0, width, height / 2);
+    ctx.fillStyle = "#1c344b";
+    ctx.fillRect(0, height / 2, width, height / 2);
+    for (const x of [7.5, 24.5]) {
+      ctx.fillStyle = "#f5dbac0e";
+      ctx.fillRect((x - 2.5) * tile, 0, 5 * tile, height);
+    }
+    ctx.strokeStyle = "#e9efff16";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 1; x < arenaWidth; x++) {
+      ctx.moveTo(x * tile, 0);
+      ctx.lineTo(x * tile, height);
+    }
+    for (let y = 1; y < arenaHeight; y++) {
+      ctx.moveTo(0, y * tile);
+      ctx.lineTo(width, y * tile);
+    }
+    ctx.stroke();
+    ctx.fillStyle = "#bdadc3";
+    ctx.fillRect(0, height / 2 - 1, width, 2);
+    ctx.font = "bold 13px system-ui";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#f0a4ab";
+    ctx.fillText("BLACK TERRITORY", 12, 23);
+    ctx.fillStyle = "#9dd6fa";
+    ctx.fillText("WHITE TERRITORY", 12, height - 13);
+
+    if (activeCard && cursor) {
+      const { side, key } = activeCard;
+      const valid = canDeploy(battle, side, key, cursor.x, cursor.y);
+      ctx.fillStyle = valid ? "#f2d7ff66" : "#ff505a55";
+      if (key === "rocket") royaleCircle(cursor.x, cursor.y, 1.6, ctx.fillStyle);
+      else if (key === "roller") {
+        const end = cursor.y + (side === "w" ? -9 : 9);
+        ctx.fillRect((cursor.x - 1.5) * tile, (Math.min(cursor.y, end) - .5) * tile, 3 * tile, 10 * tile);
+      }
+      ctx.strokeStyle = valid ? "#fff" : "#ff797f";
+      ctx.strokeRect((cursor.x - .5) * tile + 1, (cursor.y - .5) * tile + 1, tile - 2, tile - 2);
+    }
+    if (!battle) {
+      ctx.fillStyle = "#0d1628e8";
+      ctx.fillRect(width / 2 - 173, height / 2 - 30, 346, 60);
+      ctx.fillStyle = "#edf3ff";
+      ctx.font = "bold 23px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Start a battle to deploy", width / 2, height / 2 + 8);
+      return;
+    }
+    for (const unit of battle.entities) {
+      if (unit.hp <= 0) continue;
+      if (unit.type === "beam" && unit.target?.hp > 0 && arenaDistance(unit, unit.target) <= 4) {
+        ctx.beginPath();
+        ctx.moveTo(unit.x * tile, unit.y * tile);
+        ctx.lineTo(unit.target.x * tile, unit.target.y * tile);
+        ctx.lineWidth = Math.min(9, 2 + (battle.time - unit.lockAt) * 1.9);
+        ctx.strokeStyle = "#e98cf6";
+        ctx.stroke();
+      }
+      const lift = unit.jump ? .65 * Math.sin(Math.PI * clamp((battle.time - unit.jump.start) / .36, 0, 1)) : 0;
+      const y = unit.y - lift, radius = unit.stats.radius;
+      royaleCircle(unit.x, y, radius + .065, royaleColors[unit.side]);
+      royaleCircle(unit.x, y, radius, crownTower(unit) ? "#151c31" : "#26324b");
+      ctx.fillStyle = "#fff";
+      ctx.font = `${Math.round(radius * tile * 1.65)}px DejaVu Sans, serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(unit.stats.icon, unit.x * tile, y * tile + 1);
+      ctx.textBaseline = "alphabetic";
+      const bar = (radius + .1) * tile;
+      ctx.fillStyle = "#111827";
+      ctx.fillRect(unit.x * tile - bar, (y - radius) * tile - 6, 2 * bar, 4);
+      ctx.fillStyle = royaleColors[unit.side];
+      ctx.fillRect(unit.x * tile - bar, (y - radius) * tile - 6, 2 * bar * Math.max(0, unit.hp) / unit.stats.hp, 4);
+      if (crownTower(unit)) {
+        ctx.font = "bold 14px system-ui";
+        ctx.fillText(Math.ceil(unit.hp), unit.x * tile, (y - radius) * tile - 10);
+      }
+    }
+    for (const effect of battle.effects) {
+      const t = clamp((battle.time - effect.start) / (effect.end - effect.start), 0, 1);
+      if (effect.kind === "roller") {
+        ctx.fillStyle = "#a7754e";
+        ctx.fillRect((effect.x - 1.5) * tile, (effect.y - .5) * tile, 3 * tile, tile);
+        ctx.strokeStyle = "#ffd2a1";
+        ctx.strokeRect((effect.x - 1.5) * tile, (effect.y - .5) * tile, 3 * tile, tile);
+      } else if (effect.kind === "rocket") {
+        const origin = effect.side === "w" ? 18 : 0;
+        const y = origin + (effect.y - origin) * t;
+        royaleCircle(effect.x, effect.y, 1.6, "#ffac5d40");
+        royaleCircle(effect.x, y, .25, "#ffe384");
+      } else if (effect.kind === "blast" || effect.kind === "jump") {
+        royaleCircle(effect.x, effect.y, (.4 + t * 1.25), `rgba(255,192,105,${.6 * (1 - t)})`);
+      } else if (effect.kind === "strike") {
+        royaleCircle(effect.x, effect.y, .2 + .3 * t, `rgba(255,224,150,${1 - t})`);
+      } else {
+        const x = effect.fromX + (effect.x - effect.fromX) * t;
+        const y = effect.fromY + (effect.y - effect.fromY) * t;
+        royaleCircle(x, y, .13, effect.kind === "rock" ? "#d8b79b" : "#e1b3ff");
+      }
+    }
+    if (battle.result) {
+      ctx.fillStyle = "#0d1628eb";
+      ctx.fillRect(width * .18, height / 2 - 34, width * .64, 68);
+      ctx.fillStyle = "#edf3ff";
+      ctx.font = "bold 22px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(battle.result, width / 2, height / 2 + 8);
+    }
+  }
+  function royaleVisible() {
+    return mode === "local" && royaleOpen && page === "play" && !$("game-screen").hidden;
+  }
+  function royaleLoop(timestamp) {
+    royaleFrame = 0;
+    if (!royaleVisible() || !battle || battle.result) {
+      lastRoyaleFrame = null;
+      return;
+    }
+    if (lastRoyaleFrame !== null) accumulator += Math.min(.12, (timestamp - lastRoyaleFrame) / 1000);
+    lastRoyaleFrame = timestamp;
+    const dt = 1 / 60;
+    while (accumulator >= dt && !battle.result) {
+      stepRoyale(battle, dt);
+      accumulator -= dt;
+    }
+    drawRoyale();
+    if (!battle.result) royaleFrame = requestAnimationFrame(royaleLoop);
+    else lastRoyaleFrame = null;
+  }
+  function renderRoyale() {
+    updateRoyaleUI();
+    drawRoyale();
+    if (!royaleFrame && battle && !battle.result) royaleFrame = requestAnimationFrame(royaleLoop);
+  }
+  document.addEventListener("visibilitychange", () => { lastRoyaleFrame = null; });
+  buildRoyaleUI();
+
   function goTo(next, keepReview = !1) {
     mode === "review" && !keepReview && (review = null, changeMode("online")), page = next;
     for (let button of $("site-menu").querySelectorAll("[data-page]")) {
@@ -18097,6 +19156,7 @@ FIREBASE: `));
       $(`page-${button.dataset.page}`).hidden = !current, current ? button.setAttribute("aria-current", "page") : button.removeAttribute("aria-current");
     }
     setMenu(!1), page === "history" && renderHistory();
+    if (page === "play" && mode === "local") renderGame();
   }
   function setMenu(open) {
     $("site-menu").hidden = !open, $("menu-toggle").setAttribute("aria-expanded", String(open)), $("menu-toggle").setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
@@ -18127,22 +19187,26 @@ FIREBASE: `));
   function rememberLocal() {
     try {
       let moves = "-" + local.history({ verbose: !0 }).map(encodeMove).join("");
-      localStorage.setItem(`VChess:local:${account.uid}`, JSON.stringify({ moves, date: localStartedAt, outcome: localOutcome, draw: localDraw }));
+      localStorage.setItem(`VChess:local:${account?.uid ?? "guest"}`, JSON.stringify({ moves, date: localStartedAt, outcome: localOutcome, draw: localDraw, variant: localVariant, arcade }));
     } catch {
     }
   }
   function restoreLocal() {
-    local = new Chess(), localOutcome = "", localStartedAt = void 0, localDraw = !1;
+    local = new Chess(), localOutcome = "", localStartedAt = void 0, localDraw = !1, arcade = null, localVariant = "classic";
     try {
-      let saved = JSON.parse(localStorage.getItem(`VChess:local:${account.uid}`) ?? "null");
+      let saved = JSON.parse(localStorage.getItem(`VChess:local:${account?.uid ?? "guest"}`) ?? "null");
       if (!saved) return;
       local = replay(saved.moves), localStartedAt = saved.date, localOutcome = saved.outcome ?? "", localDraw = !!saved.draw;
+      if (saved.variant === "minigame" && saved.arcade) {
+        localVariant = "minigame";
+        arcade = saved.arcade;
+      }
     } catch {
     }
   }
   function finishLocal(result) {
     let date = localStartedAt ?? Date.now(), moves = "-" + local.history({ verbose: !0 }).map(encodeMove).join("");
-    localOutcome = result, localDraw = !1, localHistory.unshift({ id: `local-${Date.now()}`, title: "Local game", control: "Untimed", date, moves, result }), persistLocalHistory(), rememberLocal(), renderGame();
+    localOutcome = result, localDraw = !1, localHistory.unshift({ id: `local-${Date.now()}`, title: arcade ? "Random Minigame Chess" : "Local game", control: arcade ? "5+2" : "Untimed", date, moves, result }), persistLocalHistory(), rememberLocal(), renderGame();
   }
   function resumeMatch() {
     let id = /^#game=([-_A-Za-z0-9]{1,80})$/.exec(location.hash)?.[1];
@@ -18226,6 +19290,17 @@ FIREBASE: `));
     return game?.state === "active" && !inSetup(game) && !!chess && !resultFor(game, chess);
   }
   function tickClocks() {
+    if (mode === "local" && arcade) {
+      if (flagArcade()) return;
+      const running = !localOutcome && !arcade.pending;
+      for (const clock of $("page-play").querySelectorAll("[data-clock]")) {
+        const color = clock.dataset.clock, ms = arcadeRemaining(color), display = showTime(ms);
+        if (clock.textContent !== display) clock.textContent = display;
+        clock.classList.toggle("running", running && local.turn() === color);
+        clock.classList.toggle("low", running && local.turn() === color && ms <= 10000);
+      }
+      return;
+    }
     let game = currentGame();
     if (inSetup(game)) {
       renderSetupStatus(game);
@@ -18253,7 +19328,7 @@ FIREBASE: `));
   }
   function savedLocalHistory() {
     try {
-      let records = JSON.parse(localStorage.getItem(`VChess:history:${account.uid}`) ?? "[]");
+      let records = JSON.parse(localStorage.getItem(`VChess:history:${account?.uid ?? "guest"}`) ?? "[]");
       return Array.isArray(records) ? records : [];
     } catch {
       return [];
@@ -18261,7 +19336,7 @@ FIREBASE: `));
   }
   function persistLocalHistory() {
     try {
-      localStorage.setItem(`VChess:history:${account.uid}`, JSON.stringify(localHistory));
+      localStorage.setItem(`VChess:history:${account?.uid ?? "guest"}`, JSON.stringify(localHistory));
     } catch {
     }
   }
@@ -18381,13 +19456,13 @@ FIREBASE: `));
   }
   function canMove() {
     let game = currentGame();
-    return position().isGameOver() || mode === "local" && localOutcome ? !1 : mode === "local" || !!(isPlaying(game, onlinePosition) && !moving && onlinePosition.turn() === myColor(game) && (!game.control || remaining(game, game.turn, now()) > 0));
+    return position().isGameOver() || mode === "local" && (localOutcome || arcade?.pending || royaleOpen || arcade && arcadeRemaining(local.turn()) <= 0) ? !1 : mode === "local" || !!(isPlaying(game, onlinePosition) && !moving && onlinePosition.turn() === myColor(game) && (!game.control || remaining(game, game.turn, now()) > 0));
   }
   function playerRow(element, color, game) {
     let ownPlayer = game && color === myColor(game), icon = node2("span", "player-icon", ownPlayer ? avatarFor(profile) : color === "w" ? "\u2654" : "\u265A");
     icon.setAttribute("aria-hidden", "true");
     let name5 = node2("span", "", ownPlayer && profile.name ? profile.name : playerName(game, color));
-    if (ownPlayer && name5.append(node2("span", "rating", String(rating))), game && name5.append(node2("span", "color-label", color === "w" ? "White" : "Black")), element.replaceChildren(icon, name5), game?.control && !inSetup(game) && mode === "online") {
+    if (ownPlayer && name5.append(node2("span", "rating", String(rating))), game && name5.append(node2("span", "color-label", color === "w" ? "White" : "Black")), element.replaceChildren(icon, name5), (mode === "local" && arcade || game?.control && !inSetup(game) && mode === "online")) {
       let clock = node2("span", "clock");
       clock.dataset.clock = color, clock.setAttribute("aria-label", color === "w" ? "White clock" : "Black clock"), element.append(clock);
     }
@@ -18434,7 +19509,7 @@ FIREBASE: `));
     lockingSetup = !0, selected = null, renderBoard(), await perform(() => onlineApi.submitSetup(key, myColor(game), setupLayout(game))), lockingSetup = !1, gameId === key && renderGame();
   });
   function renderBoard() {
-    let chess = position(), game = mode === "review" ? review.record.game : currentGame(), setup = inSetup(game), fog = game?.variant === "fog", color = game ? myColor(game) : null, layout = setup ? setupLayout(game) : null, board = $("board"), focusedSquare = board.contains(document.activeElement) ? document.activeElement.dataset.square : null, last = chess.history({ verbose: !0 }).at(-1), legal = selected && canMove() ? legalMoves(chess, game?.variant).filter((move) => move.from === selected) : [], displayFiles = orientation === "w" ? files : [...files].reverse().join(""), ranks = orientation === "w" ? "87654321" : "12345678", grid = document.createDocumentFragment();
+    let chess = position(), game = mode === "review" ? review.record.game : currentGame(), setup = inSetup(game), fog = game?.variant === "fog", color = game ? myColor(game) : null, layout = setup ? setupLayout(game) : null, board = $("board"), focusedSquare = board.contains(document.activeElement) ? document.activeElement.dataset.square : null, last = chess.history({ verbose: !0 }).at(-1), legal = selected && canMove() ? localLegalMoves(chess, game?.variant).filter((move) => move.from === selected) : [], displayFiles = orientation === "w" ? files : [...files].reverse().join(""), ranks = orientation === "w" ? "87654321" : "12345678", grid = document.createDocumentFragment();
     for (let [row, rank2] of [...ranks].entries())
       for (let [column, file2] of [...displayFiles].entries()) {
         let square = file2 + rank2, setupType = setup ? layout[setupIndex(square, color)] : null, piece = setup ? setupType && { type: setupType, color } : chess.get(square), concealed = !!(piece && fog && piece.color !== color), diddy = piece?.type === "q" && game?.variant === "predator", pieceName = concealed ? "hidden piece" : diddy ? "Diddy" : pieceNames[piece?.type], cell = node2("button", `square${(row + column) % 2 ? " dark" : ""}`);
@@ -18448,7 +19523,8 @@ FIREBASE: `));
   }
   function renderGame() {
     let game = currentGame(), chess = position();
-    $("local-tab").classList.toggle("active", mode === "local"), $("online-tab").classList.toggle("active", mode === "online"), $("local-tab").setAttribute("aria-pressed", String(mode === "local")), $("online-tab").setAttribute("aria-pressed", String(mode === "online")), $("play-tabs").hidden = mode === "review", $("active-panel").hidden = mode !== "online", $("review-actions").hidden = mode !== "review", $("game-mode").textContent = mode === "review" ? "GAME REVIEW" : mode === "local" ? "LOCAL GAME" : game ? `${variantNames[game.variant] ?? "ONLINE GAME"} \xB7 ${game.control ?? "UNTIMED"}` : "ONLINE LOBBY";
+    renderLocalOptions();
+    $("local-tab").classList.toggle("active", mode === "local"), $("online-tab").classList.toggle("active", mode === "online"), $("local-tab").setAttribute("aria-pressed", String(mode === "local")), $("online-tab").setAttribute("aria-pressed", String(mode === "online")), $("play-tabs").hidden = mode === "review", $("active-panel").hidden = mode !== "online", $("review-actions").hidden = mode !== "review", $("game-mode").textContent = mode === "review" ? "GAME REVIEW" : mode === "local" ? arcade ? "RANDOM MINIGAME CHESS · 5+2" : "LOCAL GAME" : game ? `${variantNames[game.variant] ?? "ONLINE GAME"} \xB7 ${game.control ?? "UNTIMED"}` : "ONLINE LOBBY";
     let status = mode === "local" && localOutcome ? localOutcome : describe(chess);
     if (mode === "review") {
       let end = (review.record.moves.length - 1) / 5;
@@ -18461,6 +19537,9 @@ FIREBASE: `));
     let offer = canAct && (mode === "local" ? localDraw : game.draw), canAnswer = offer && (mode === "local" || offer !== myColor(game));
     $("offer-draw").hidden = !canAct || !!offer, $("offer-draw").disabled = moving, $("draw-panel").hidden = !offer, $("draw-message").textContent = offer ? mode === "local" ? "The other player can accept or decline the draw." : canAnswer ? `${other(game).name} offered a draw.` : "Draw offer sent. Waiting for your opponent." : "", $("accept-draw").hidden = !canAnswer, $("decline-draw").hidden = !canAnswer, $("draw-panel").querySelector(".game-actions").hidden = !canAnswer;
     let shownGame = mode === "review" ? review.record.game : game, variant = shownGame?.variant, note = variantNotes[variant];
+    if (mode === "local" && arcade && !localOutcome) {
+      note = arcade.message || "A challenge goes to a randomly chosen side after every 3–5 half-moves. The chess clock pauses for each challenge.";
+    }
     $("variant-note").hidden = !note, $("variant-note").textContent = note ?? "", $("setup-panel").hidden = !inSetup(game);
     let last = chess.history({ verbose: !0 }).at(-1);
     $("capture-note").hidden = variant !== "fog" || !last?.captured, $("capture-note").textContent = last?.captured ? `Captured ${pieceNames[last.captured]} on ${last.to}.` : "";
@@ -18490,6 +19569,7 @@ FIREBASE: `));
       }
     }
     renderBoard();
+    presentMinigame();
   }
   function changeMode(next) {
     mode === "local" && (localOrientation = orientation), mode = next, selected = null, orientation = next === "local" ? localOrientation : currentGame() ? myColor(currentGame()) : "w", syncGame();
@@ -18505,7 +19585,17 @@ FIREBASE: `));
     let game = currentGame();
     if (!canMove()) return;
     if (selected = null, mode === "local") {
-      local.history().length || (localStartedAt = Date.now()), local.move(move), localDraw = !1, local.isGameOver() ? finishLocal(describe(local)) : (rememberLocal(), renderGame());
+      if (arcade && !localLegalMoves(local).some((allowed) => encodeMove(allowed) === encodeMove(move))) return;
+      if (!local.history().length) localStartedAt = Date.now();
+      if (arcade) advanceArcade(move);
+      local.move(move);
+      localDraw = false;
+      if (local.isGameOver()) finishLocal(describe(local));
+      else {
+        scheduleMinigame();
+        rememberLocal();
+        renderGame();
+      }
       return;
     }
     let id = gameId;
@@ -18520,7 +19610,7 @@ FIREBASE: `));
     if (!canMove()) return;
     let chess = position();
     if (selected && selected !== square) {
-      let candidates = legalMoves(chess, game?.variant).filter((move) => move.from === selected && move.to === square);
+      let candidates = localLegalMoves(chess, game?.variant).filter((move) => move.from === selected && move.to === square);
       if (candidates.length === 1) {
         submitMove(candidates[0]);
         return;
@@ -18561,7 +19651,7 @@ FIREBASE: `));
     orientation = orientation === "w" ? "b" : "w", renderBoard();
   });
   $("new-game").addEventListener("click", () => {
-    local.history().length && !localOutcome && !local.isGameOver() && !confirm("Start a new local game?") || (local.reset(), localOutcome = "", localDraw = !1, localStartedAt = void 0, selected = null, rememberLocal(), renderGame());
+    startLocalChess();
   });
   $("resign-game").addEventListener("click", (event) => {
     if (moving || !confirm("Resign this game?")) return;
@@ -18663,6 +19753,14 @@ FIREBASE: `));
     waitingForGame = null, page === "friends" && game.state === "active" && openGame(id);
   }
   function updateAccount(identity) {
+    if (guest && !identity) return;
+    if (guest) leaveGuest();
+    closeMinigame();
+    resetRoyale();
+    if (!identity) {
+      arcade = null;
+      localVariant = "classic";
+    }
     subscriptions.forEach((stop) => stop()), subscriptions = [];
     let hadAccount = !!account;
     account = identity, $("auth-screen").hidden = !!identity, $("game-screen").hidden = !identity, (identity || hadAccount) && ($("password").value = ""), gameId = null, waitingForGame = null, flagAttempts.clear(), setupAttempts.clear(), fogDrafts.clear(), clockReady = !1, hiddenGames = {}, profile = {}, rating = 200, identity && restoreLocal(), localHistory = identity ? savedLocalHistory() : [];
@@ -18692,7 +19790,8 @@ FIREBASE: `));
     $("auth-error").textContent = messageFor(error2), $("auth-error").hidden = !1;
   }
   $("account-button").addEventListener("click", (event) => {
-    account && perform(() => onlineApi.leave(), event.currentTarget);
+    if (guest) leaveGuest();
+    else if (account) perform(() => onlineApi.leave(), event.currentTarget);
   });
   $("switch-auth").addEventListener("click", () => {
     configureAuth(!creatingAccount), $("username").focus();
