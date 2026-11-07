@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Play classic chess on one device or challenge friends online.">
 <meta name="theme-color" content="#0c1320">
-<title>Rookroom · Chess Club</title>
+<title>VChess</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1320;--panel:#141f2e;--edge:#263448;--ink:#f3f6fd;--muted:#a4b2c8;--accent:#a6baff;--primary:#a2b7ff;--light:#e5dfcd;--dark:#839378;--radius:16px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
@@ -159,7 +159,7 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 <body>
 <main class="auth-screen" id="auth-screen">
   <section class="auth-card" aria-labelledby="auth-title">
-  <div class="auth-brand"><span class="brand-icon" aria-hidden="true">♜</span><div>Rookroom<span class="brand-caption">CHESS CLUB</span></div></div>
+  <div class="auth-brand"><span class="brand-icon" aria-hidden="true">♜</span><div>VChess<span class="brand-caption">CHESS CLUB</span></div></div>
   <h2 id="auth-title">Sign in</h2>
   <p id="auth-description">Enter your username and password to join your friends.</p>
   <form id="auth-form">
@@ -175,7 +175,7 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 <div id="game-screen" hidden>
 <header class="topbar" id="top">
   <div class="top-inner">
-    <a class="brand" href="#top"><span class="brand-icon" aria-hidden="true">♜</span><span>Rookroom<span class="brand-caption">CHESS CLUB</span></span></a>
+    <a class="brand" href="#top"><span class="brand-icon" aria-hidden="true">♜</span><span>VChess<span class="brand-caption">CHESS CLUB</span></span></a>
     <div class="menu-wrap">
       <button id="menu-toggle" class="button subtle menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <nav id="site-menu" class="site-menu" aria-label="Main navigation" hidden>
@@ -192,9 +192,9 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
   <p id="notice" role="status" hidden></p>
   <section id="page-play">
   <div class="intro">
-    <p class="eyebrow"><span></span> THE CLUB ROOM</p>
+    
     <h1>Play chess<span>.</span></h1>
-    <p>Share a board, or challenge a friend from anywhere.</p>
+    
   </div>
   <nav class="tabs" id="play-tabs" aria-label="Game mode">
     <button class="tab active" id="local-tab" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3v18M3 12h18"/></svg> Local play</button>
@@ -248,7 +248,7 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
     <div class="intro"><p class="eyebrow"><span></span> YOUR ACCOUNT</p><h1>Profile<span>.</span></h1><p>Choose how you appear to friends and how your board looks.</p></div>
     <div class="panel profile-card">
       <div class="profile-banner"><span id="profile-avatar-preview" class="brand-icon" aria-hidden="true"></span><div><strong id="profile-username"></strong><span id="profile-rating" class="rating"></span></div></div>
-      <p class="profile-help">Your rating starts at 200. Online wins add 10, losses subtract 10, and draws leave it unchanged. Your rating has a floor of 0.</p>
+      <p class="profile-help">Your rating starts at 200. Online wins add 10, losses subtract 10, and draws leave it unchanged.</p>
       <form id="profile-form">
         <label for="profile-name">Display name</label><input id="profile-name" maxlength="30" placeholder="Optional nickname" autocomplete="off">
         <div class="profile-options">
@@ -264,162 +264,8 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
       </form>
     </div>
   </section>
-  <footer><span>ROOKROOM CHESS CLUB</span><span>Classic chess · Local and online</span></footer>
-  <details class="online-setup">
-    <summary>Online setup for the site owner</summary>
-    <ol>
-      <li>In Firebase project <code>chess-ddd2f</code>, keep Email/Password sign-in enabled.</li>
-      <li>Open Realtime Database → Rules and publish the rules below. Publish this version to enable draw offers, profile settings, timed challenges, and personal history deletion. If the database serves another app, merge the <code>rookroom</code> branch into the existing rules and check for broader access grants.</li>
-      <li>Share this file or host it over HTTPS and share the link. Each player creates a username and adds the other before sending a game challenge. The open match resumes when the page reloads. If your browser blocks sign-in storage for downloaded files, sign in again to resume.</li>
-    </ol>
-    <details><summary>Show Firebase Realtime Database rules</summary>
-      <pre>{
-  "rules": {
-    "rookroom": {
-      "v1": {
-        "handles": {
-          "$name": {
-            ".read": "auth != null",
-            ".write": "auth != null &amp;&amp; auth.token.email === $name + '@gmail.com' &amp;&amp; newData.val() === auth.uid &amp;&amp; (!data.exists() || data.val() === auth.uid)",
-            ".validate": "$name.matches(/^[a-z0-9_]{3,20}$/)"
-          }
-        },
-        "friends": {
-          ".indexOn": [
-            "from",
-            "to"
-          ],
-          ".read": "auth != null &amp;&amp; (query.orderByChild === 'from' || query.orderByChild === 'to') &amp;&amp; query.equalTo === auth.uid",
-          "$pair": {
-            ".read": "auth != null &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val())",
-            ".write": "auth != null &amp;&amp; ((!data.exists() &amp;&amp; newData.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; !root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).exists()) || (data.exists() &amp;&amp; data.child('state').val() === 'pending' &amp;&amp; ((!newData.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val())) || (newData.exists() &amp;&amp; auth.uid === data.child('to').val() &amp;&amp; newData.child('state').val() === 'accepted' &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val()))))",
-            ".validate": "newData.hasChildren(['from', 'to', 'fromName', 'toName', 'state']) &amp;&amp; $pair === newData.child('from').val() + ':' + newData.child('to').val() &amp;&amp; newData.child('from').val() !== newData.child('to').val() &amp;&amp; root.child('rookroom/v1/handles').child(newData.child('fromName').val()).val() === newData.child('from').val() &amp;&amp; root.child('rookroom/v1/handles').child(newData.child('toName').val()).val() === newData.child('to').val()",
-            "from": {
-              ".validate": "newData.isString()"
-            },
-            "to": {
-              ".validate": "newData.isString()"
-            },
-            "fromName": {
-              ".validate": "newData.isString()"
-            },
-            "toName": {
-              ".validate": "newData.isString()"
-            },
-            "state": {
-              ".validate": "newData.isString()"
-            },
-            "$other": {
-              ".validate": false
-            }
-          }
-        },
-        "games": {
-          ".indexOn": [
-            "from",
-            "to"
-          ],
-          ".read": "auth != null &amp;&amp; (query.orderByChild === 'from' || query.orderByChild === 'to') &amp;&amp; query.equalTo === auth.uid",
-          "$game": {
-            ".read": "auth != null &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val())",
-            ".write": "((data.child('draw').val() !== 'agreed' &amp;&amp; (newData.child('draw').val() === data.child('draw').val() || (((data.child('draw').val() === 'w' &amp;&amp; auth.uid !== data.child('white').val()) || (data.child('draw').val() === 'b' &amp;&amp; auth.uid === data.child('white').val())) &amp;&amp; newData.child('draw').val() === null &amp;&amp; data.child('moves').val() !== newData.child('moves').val())) &amp;&amp; ((!newData.child('control').exists() &amp;&amp; !data.child('control').exists() &amp;&amp; auth != null &amp;&amp; newData.exists() &amp;&amp; ((!data.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === '-' &amp;&amp; newData.child('turn').val() === 'w' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; (root.child('rookroom/v1/friends').child(newData.child('from').val() + ':' + newData.child('to').val()).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).child('state').val() === 'accepted')) || (data.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; ((data.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; ((auth.uid === data.child('to').val() &amp;&amp; (newData.child('state').val() === 'active' || newData.child('state').val() === 'declined')) || (auth.uid === data.child('from').val() &amp;&amp; newData.child('state').val() === 'canceled'))) || (data.child('state').val() === 'active' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; ((newData.child('resigned').val() === '-' &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; auth.uid === data.child('white').val() &amp;&amp; newData.child('turn').val() === 'b') || (data.child('turn').val() === 'b' &amp;&amp; auth.uid !== data.child('white').val() &amp;&amp; newData.child('turn').val() === 'w')) &amp;&amp; newData.child('moves').val().length === data.child('moves').val().length + 5 &amp;&amp; newData.child('moves').val().beginsWith(data.child('moves').val())) || (newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val()))))))) || (newData.child('control').exists() &amp;&amp; ((!data.exists() &amp;&amp; auth != null &amp;&amp; newData.exists() &amp;&amp; ((!data.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === '-' &amp;&amp; newData.child('turn').val() === 'w' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; (root.child('rookroom/v1/friends').child(newData.child('from').val() + ':' + newData.child('to').val()).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).child('state').val() === 'accepted')) || (data.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; ((data.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; ((auth.uid === data.child('to').val() &amp;&amp; (newData.child('state').val() === 'active' || newData.child('state').val() === 'declined')) || (auth.uid === data.child('from').val() &amp;&amp; newData.child('state').val() === 'canceled'))) || (data.child('state').val() === 'active' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; ((newData.child('resigned').val() === '-' &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; auth.uid === data.child('white').val() &amp;&amp; newData.child('turn').val() === 'b') || (data.child('turn').val() === 'b' &amp;&amp; auth.uid !== data.child('white').val() &amp;&amp; newData.child('turn').val() === 'w')) &amp;&amp; newData.child('moves').val().length === data.child('moves').val().length + 5 &amp;&amp; newData.child('moves').val().beginsWith(data.child('moves').val())) || (newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val())))))) &amp;&amp; ((newData.child('control').val() === '1+0' &amp;&amp; newData.child('whiteCredit').val() === 60000) || (newData.child('control').val() === '1+2' &amp;&amp; newData.child('whiteCredit').val() === 60000) || (newData.child('control').val() === '2+0' &amp;&amp; newData.child('whiteCredit').val() === 120000) || (newData.child('control').val() === '2+1' &amp;&amp; newData.child('whiteCredit').val() === 120000) || (newData.child('control').val() === '5+0' &amp;&amp; newData.child('whiteCredit').val() === 300000) || (newData.child('control').val() === '5+2' &amp;&amp; newData.child('whiteCredit').val() === 300000) || (newData.child('control').val() === '10+0' &amp;&amp; newData.child('whiteCredit').val() === 600000) || (newData.child('control').val() === '10+5' &amp;&amp; newData.child('whiteCredit').val() === 600000) || (newData.child('control').val() === '15+10' &amp;&amp; newData.child('whiteCredit').val() === 900000) || (newData.child('control').val() === '30+0' &amp;&amp; newData.child('whiteCredit').val() === 1800000)) &amp;&amp; newData.child('blackCredit').val() === newData.child('whiteCredit').val() &amp;&amp; newData.child('createdAt').val() === now &amp;&amp; newData.child('clockAt').val() === 0 &amp;&amp; newData.child('startedAt').val() === 0 &amp;&amp; newData.child('whiteAt').val() === 0 &amp;&amp; newData.child('blackAt').val() === 0 &amp;&amp; newData.child('flagged').val() === '-') || (data.child('control').exists() &amp;&amp; newData.child('control').val() === data.child('control').val() &amp;&amp; newData.child('createdAt').val() === data.child('createdAt').val() &amp;&amp; ((auth != null &amp;&amp; newData.exists() &amp;&amp; ((!data.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === '-' &amp;&amp; newData.child('turn').val() === 'w' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; (root.child('rookroom/v1/friends').child(newData.child('from').val() + ':' + newData.child('to').val()).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).child('state').val() === 'accepted')) || (data.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; ((data.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; ((auth.uid === data.child('to').val() &amp;&amp; (newData.child('state').val() === 'active' || newData.child('state').val() === 'declined')) || (auth.uid === data.child('from').val() &amp;&amp; newData.child('state').val() === 'canceled'))) || (data.child('state').val() === 'active' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; ((newData.child('resigned').val() === '-' &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; auth.uid === data.child('white').val() &amp;&amp; newData.child('turn').val() === 'b') || (data.child('turn').val() === 'b' &amp;&amp; auth.uid !== data.child('white').val() &amp;&amp; newData.child('turn').val() === 'w')) &amp;&amp; newData.child('moves').val().length === data.child('moves').val().length + 5 &amp;&amp; newData.child('moves').val().beginsWith(data.child('moves').val())) || (newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val())))))) &amp;&amp; data.child('state').val() === 'pending' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() &amp;&amp; newData.child('whiteAt').val() === data.child('whiteAt').val() &amp;&amp; newData.child('blackAt').val() === data.child('blackAt').val() &amp;&amp; newData.child('flagged').val() === data.child('flagged').val() &amp;&amp; newData.child('startedAt').val() === now &amp;&amp; newData.child('clockAt').val() === now) || (auth != null &amp;&amp; newData.exists() &amp;&amp; ((!data.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === '-' &amp;&amp; newData.child('turn').val() === 'w' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; (root.child('rookroom/v1/friends').child(newData.child('from').val() + ':' + newData.child('to').val()).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).child('state').val() === 'accepted')) || (data.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; ((data.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; ((auth.uid === data.child('to').val() &amp;&amp; (newData.child('state').val() === 'active' || newData.child('state').val() === 'declined')) || (auth.uid === data.child('from').val() &amp;&amp; newData.child('state').val() === 'canceled'))) || (data.child('state').val() === 'active' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; ((newData.child('resigned').val() === '-' &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; auth.uid === data.child('white').val() &amp;&amp; newData.child('turn').val() === 'b') || (data.child('turn').val() === 'b' &amp;&amp; auth.uid !== data.child('white').val() &amp;&amp; newData.child('turn').val() === 'w')) &amp;&amp; newData.child('moves').val().length === data.child('moves').val().length + 5 &amp;&amp; newData.child('moves').val().beginsWith(data.child('moves').val())) || (newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val())))))) &amp;&amp; data.child('state').val() === 'pending' &amp;&amp; newData.child('state').val() !== 'active' &amp;&amp; newData.child('control').val() === data.child('control').val() &amp;&amp; newData.child('createdAt').val() === data.child('createdAt').val() &amp;&amp; newData.child('startedAt').val() === data.child('startedAt').val() &amp;&amp; newData.child('clockAt').val() === data.child('clockAt').val() &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() &amp;&amp; newData.child('whiteAt').val() === data.child('whiteAt').val() &amp;&amp; newData.child('blackAt').val() === data.child('blackAt').val() &amp;&amp; newData.child('flagged').val() === data.child('flagged').val()) || (auth != null &amp;&amp; newData.exists() &amp;&amp; ((!data.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === '-' &amp;&amp; newData.child('turn').val() === 'w' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; (root.child('rookroom/v1/friends').child(newData.child('from').val() + ':' + newData.child('to').val()).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).child('state').val() === 'accepted')) || (data.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; ((data.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; ((auth.uid === data.child('to').val() &amp;&amp; (newData.child('state').val() === 'active' || newData.child('state').val() === 'declined')) || (auth.uid === data.child('from').val() &amp;&amp; newData.child('state').val() === 'canceled'))) || (data.child('state').val() === 'active' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; ((newData.child('resigned').val() === '-' &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; auth.uid === data.child('white').val() &amp;&amp; newData.child('turn').val() === 'b') || (data.child('turn').val() === 'b' &amp;&amp; auth.uid !== data.child('white').val() &amp;&amp; newData.child('turn').val() === 'w')) &amp;&amp; newData.child('moves').val().length === data.child('moves').val().length + 5 &amp;&amp; newData.child('moves').val().beginsWith(data.child('moves').val())) || (newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val())))))) &amp;&amp; data.child('state').val() === 'active' &amp;&amp; data.child('flagged').val() === '-' &amp;&amp; newData.child('flagged').val() === '-' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; newData.child('startedAt').val() === data.child('startedAt').val() &amp;&amp; newData.child('clockAt').val() === now &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; now &lt; data.child('clockAt').val() + data.child('whiteCredit').val() - data.child('whiteAt').val() &amp;&amp; newData.child('whiteAt').val() === now &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() &amp;&amp; newData.child('blackAt').val() === data.child('blackAt').val() &amp;&amp; ((data.child('control').val() === '1+0' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '1+2' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 2000) || (data.child('control').val() === '2+0' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '2+1' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 1000) || (data.child('control').val() === '5+0' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '5+2' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 2000) || (data.child('control').val() === '10+0' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '10+5' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 5000) || (data.child('control').val() === '15+10' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 10000) || (data.child('control').val() === '30+0' &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() - data.child('whiteAt').val() + data.child('clockAt').val() + 0))) || (data.child('turn').val() === 'b' &amp;&amp; now &lt; data.child('clockAt').val() + data.child('blackCredit').val() - data.child('blackAt').val() &amp;&amp; newData.child('blackAt').val() === now &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() &amp;&amp; newData.child('whiteAt').val() === data.child('whiteAt').val() &amp;&amp; ((data.child('control').val() === '1+0' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '1+2' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 2000) || (data.child('control').val() === '2+0' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '2+1' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 1000) || (data.child('control').val() === '5+0' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '5+2' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 2000) || (data.child('control').val() === '10+0' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 0) || (data.child('control').val() === '10+5' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 5000) || (data.child('control').val() === '15+10' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 10000) || (data.child('control').val() === '30+0' &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() - data.child('blackAt').val() + data.child('clockAt').val() + 0))))) || (auth != null &amp;&amp; newData.exists() &amp;&amp; ((!data.exists() &amp;&amp; auth.uid === newData.child('from').val() &amp;&amp; newData.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === '-' &amp;&amp; newData.child('turn').val() === 'w' &amp;&amp; newData.child('resigned').val() === '-' &amp;&amp; (root.child('rookroom/v1/friends').child(newData.child('from').val() + ':' + newData.child('to').val()).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child(newData.child('to').val() + ':' + newData.child('from').val()).child('state').val() === 'accepted')) || (data.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; ((data.child('state').val() === 'pending' &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; ((auth.uid === data.child('to').val() &amp;&amp; (newData.child('state').val() === 'active' || newData.child('state').val() === 'declined')) || (auth.uid === data.child('from').val() &amp;&amp; newData.child('state').val() === 'canceled'))) || (data.child('state').val() === 'active' &amp;&amp; newData.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; ((newData.child('resigned').val() === '-' &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; auth.uid === data.child('white').val() &amp;&amp; newData.child('turn').val() === 'b') || (data.child('turn').val() === 'b' &amp;&amp; auth.uid !== data.child('white').val() &amp;&amp; newData.child('turn').val() === 'w')) &amp;&amp; newData.child('moves').val().length === data.child('moves').val().length + 5 &amp;&amp; newData.child('moves').val().beginsWith(data.child('moves').val())) || (newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val())))))) &amp;&amp; data.child('state').val() === 'active' &amp;&amp; data.child('flagged').val() === '-' &amp;&amp; newData.child('resigned').val() === auth.uid &amp;&amp; newData.child('control').val() === data.child('control').val() &amp;&amp; newData.child('createdAt').val() === data.child('createdAt').val() &amp;&amp; newData.child('startedAt').val() === data.child('startedAt').val() &amp;&amp; newData.child('clockAt').val() === data.child('clockAt').val() &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() &amp;&amp; newData.child('whiteAt').val() === data.child('whiteAt').val() &amp;&amp; newData.child('blackAt').val() === data.child('blackAt').val() &amp;&amp; newData.child('flagged').val() === data.child('flagged').val() &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; now &lt; data.child('clockAt').val() + data.child('whiteCredit').val() - data.child('whiteAt').val()) || (data.child('turn').val() === 'b' &amp;&amp; now &lt; data.child('clockAt').val() + data.child('blackCredit').val() - data.child('blackAt').val()))) || (auth != null &amp;&amp; newData.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; data.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; data.child('flagged').val() === '-' &amp;&amp; newData.child('flagged').val() === data.child('turn').val() &amp;&amp; newData.child('from').val() === data.child('from').val() &amp;&amp; newData.child('to').val() === data.child('to').val() &amp;&amp; newData.child('fromName').val() === data.child('fromName').val() &amp;&amp; newData.child('toName').val() === data.child('toName').val() &amp;&amp; newData.child('white').val() === data.child('white').val() &amp;&amp; newData.child('state').val() === data.child('state').val() &amp;&amp; newData.child('moves').val() === data.child('moves').val() &amp;&amp; newData.child('turn').val() === data.child('turn').val() &amp;&amp; newData.child('resigned').val() === data.child('resigned').val() &amp;&amp; newData.child('clockAt').val() === data.child('clockAt').val() &amp;&amp; newData.child('startedAt').val() === data.child('startedAt').val() &amp;&amp; newData.child('whiteAt').val() === data.child('whiteAt').val() &amp;&amp; newData.child('blackAt').val() === data.child('blackAt').val() &amp;&amp; newData.child('whiteCredit').val() === data.child('whiteCredit').val() &amp;&amp; newData.child('blackCredit').val() === data.child('blackCredit').val() &amp;&amp; newData.child('control').val() === data.child('control').val() &amp;&amp; newData.child('createdAt').val() === data.child('createdAt').val() &amp;&amp; ((data.child('turn').val() === 'w' &amp;&amp; now &gt;= data.child('clockAt').val() + data.child('whiteCredit').val() - data.child('whiteAt').val()) || (data.child('turn').val() === 'b' &amp;&amp; now &gt;= data.child('clockAt').val() + data.child('blackCredit').val() - data.child('blackAt').val()))))))))) || (auth != null &amp;&amp; newData.exists() &amp;&amp; (auth.uid === data.child('from').val() || auth.uid === data.child('to').val()) &amp;&amp; data.child('state').val() === 'active' &amp;&amp; data.child('resigned').val() === '-' &amp;&amp; (data.child('flagged').val() === null || data.child('flagged').val() === '-') &amp;&amp; data.child('from').val() === newData.child('from').val() &amp;&amp; data.child('to').val() === newData.child('to').val() &amp;&amp; data.child('fromName').val() === newData.child('fromName').val() &amp;&amp; data.child('toName').val() === newData.child('toName').val() &amp;&amp; data.child('white').val() === newData.child('white').val() &amp;&amp; data.child('state').val() === newData.child('state').val() &amp;&amp; data.child('moves').val() === newData.child('moves').val() &amp;&amp; data.child('turn').val() === newData.child('turn').val() &amp;&amp; data.child('resigned').val() === newData.child('resigned').val() &amp;&amp; data.child('control').val() === newData.child('control').val() &amp;&amp; data.child('createdAt').val() === newData.child('createdAt').val() &amp;&amp; data.child('startedAt').val() === newData.child('startedAt').val() &amp;&amp; data.child('clockAt').val() === newData.child('clockAt').val() &amp;&amp; data.child('whiteCredit').val() === newData.child('whiteCredit').val() &amp;&amp; data.child('blackCredit').val() === newData.child('blackCredit').val() &amp;&amp; data.child('whiteAt').val() === newData.child('whiteAt').val() &amp;&amp; data.child('blackAt').val() === newData.child('blackAt').val() &amp;&amp; data.child('flagged').val() === newData.child('flagged').val() &amp;&amp; (data.child('control').val() === null || (data.child('turn').val() === 'w' &amp;&amp; now &lt; data.child('clockAt').val() + data.child('whiteCredit').val() - data.child('whiteAt').val()) || (data.child('turn').val() === 'b' &amp;&amp; now &lt; data.child('clockAt').val() + data.child('blackCredit').val() - data.child('blackAt').val())) &amp;&amp; ((data.child('draw').val() === null &amp;&amp; ((auth.uid === data.child('white').val() &amp;&amp; newData.child('draw').val() === 'w') || (auth.uid !== data.child('white').val() &amp;&amp; newData.child('draw').val() === 'b'))) || (((data.child('draw').val() === 'w' &amp;&amp; auth.uid !== data.child('white').val()) || (data.child('draw').val() === 'b' &amp;&amp; auth.uid === data.child('white').val())) &amp;&amp; (newData.child('draw').val() === 'agreed' || newData.child('draw').val() === null)))))",
-            ".validate": "(newData.hasChildren(['from', 'to', 'fromName', 'toName', 'white', 'state', 'moves', 'turn', 'resigned']) &amp;&amp; newData.child('from').val() !== newData.child('to').val() &amp;&amp; root.child('rookroom/v1/handles').child(newData.child('fromName').val()).val() === newData.child('from').val() &amp;&amp; root.child('rookroom/v1/handles').child(newData.child('toName').val()).val() === newData.child('to').val() &amp;&amp; (newData.child('white').val() === newData.child('from').val() || newData.child('white').val() === newData.child('to').val()) &amp;&amp; (newData.hasChildren(['control', 'createdAt', 'startedAt', 'clockAt', 'whiteCredit', 'blackCredit', 'whiteAt', 'blackAt', 'flagged']) || (!newData.child('control').exists() &amp;&amp; !newData.child('createdAt').exists() &amp;&amp; !newData.child('startedAt').exists() &amp;&amp; !newData.child('clockAt').exists() &amp;&amp; !newData.child('whiteCredit').exists() &amp;&amp; !newData.child('blackCredit').exists() &amp;&amp; !newData.child('whiteAt').exists() &amp;&amp; !newData.child('blackAt').exists() &amp;&amp; !newData.child('flagged').exists())))",
-            "from": {
-              ".validate": "newData.isString()"
-            },
-            "to": {
-              ".validate": "newData.isString()"
-            },
-            "fromName": {
-              ".validate": "newData.isString()"
-            },
-            "toName": {
-              ".validate": "newData.isString()"
-            },
-            "white": {
-              ".validate": "newData.isString()"
-            },
-            "state": {
-              ".validate": "newData.isString()"
-            },
-            "moves": {
-              ".validate": "newData.isString() &amp;&amp; newData.val().length &lt;= 25001 &amp;&amp; newData.val().matches(/^-([a-h][1-8][a-h][1-8](q|r|b|n|-))*$/)"
-            },
-            "turn": {
-              ".validate": "newData.val() === 'w' || newData.val() === 'b'"
-            },
-            "resigned": {
-              ".validate": "newData.isString()"
-            },
-            "$other": {
-              ".validate": false
-            },
-            "control": {
-              ".validate": "(newData.val() === '1+0' || newData.val() === '1+2' || newData.val() === '2+0' || newData.val() === '2+1' || newData.val() === '5+0' || newData.val() === '5+2' || newData.val() === '10+0' || newData.val() === '10+5' || newData.val() === '15+10' || newData.val() === '30+0')"
-            },
-            "flagged": {
-              ".validate": "newData.val() === '-' || newData.val() === 'w' || newData.val() === 'b'"
-            },
-            "createdAt": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "startedAt": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "clockAt": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "whiteCredit": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "blackCredit": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "whiteAt": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "blackAt": {
-              ".validate": "newData.isNumber() &amp;&amp; newData.val() &gt;= 0"
-            },
-            "draw": {
-              ".validate": "newData.val() === 'w' || newData.val() === 'b' || newData.val() === 'agreed'"
-            }
-          }
-        },
-        "hiddenGames": {
-          "$uid": {
-            ".read": "auth != null &amp;&amp; auth.uid === $uid",
-            "$game": {
-              ".write": "auth != null &amp;&amp; auth.uid === $uid &amp;&amp; newData.val() === true &amp;&amp; (root.child('rookroom/v1/games').child($game).child('from').val() === $uid || root.child('rookroom/v1/games').child($game).child('to').val() === $uid)"
-            }
-          }
-        },
-        "profiles": {
-          "$uid": {
-            ".read": "auth != null &amp;&amp; (auth.uid === $uid || root.child('rookroom/v1/friends').child(auth.uid + ':' + $uid).child('state').val() === 'accepted' || root.child('rookroom/v1/friends').child($uid + ':' + auth.uid).child('state').val() === 'accepted')",
-            ".write": "auth != null &amp;&amp; auth.uid === $uid",
-            ".validate": "newData.hasChildren(['name', 'bio', 'avatar', 'theme'])",
-            "name": {
-              ".validate": "newData.isString() &amp;&amp; newData.val().length &lt;= 30"
-            },
-            "bio": {
-              ".validate": "newData.isString() &amp;&amp; newData.val().length &lt;= 140"
-            },
-            "avatar": {
-              ".validate": "newData.val() === 'rook' || newData.val() === 'knight' || newData.val() === 'queen' || newData.val() === 'bishop' || newData.val() === 'pawn'"
-            },
-            "theme": {
-              ".validate": "newData.val() === 'classic' || newData.val() === 'ocean' || newData.val() === 'walnut' || newData.val() === 'lavender'"
-            },
-            "$other": {
-              ".validate": false
-            }
-          }
-        }
-      }
-    }
-  }
-}
+  <footer><span>VChess</span><span>Classic chess</span></footer>
+  
 </pre>
     </details>
   </details>
@@ -483,7 +329,7 @@ POSSIBILITY OF SUCH DAMAGE.
       __defProp(target, name5, { get: all[name5], enumerable: !0 });
   };
 
-  // ../../../tmp/rookroom-profile.quaVo7/dist/clocks.js
+  // ../../../tmp/VChess-profile.quaVo7/dist/clocks.js
   function makeClock(control, timestamp) {
     if (!controls.includes(control)) throw new Error("Choose a time control.");
     let minutes = Number(control.split("+")[0]);
@@ -517,20 +363,20 @@ POSSIBILITY OF SUCH DAMAGE.
     return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
   }
   var controls, init_clocks = __esm({
-    "../../../tmp/rookroom-profile.quaVo7/dist/clocks.js"() {
+    "../../../tmp/VChess-profile.quaVo7/dist/clocks.js"() {
       controls = ["1+0", "1+2", "2+0", "2+1", "5+0", "5+2", "10+0", "10+5", "15+10", "30+0"];
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/util/dist/postinstall.mjs
+  // ../../../tmp/VChess-deps/node_modules/@firebase/util/dist/postinstall.mjs
   var getDefaultsFromPostinstall, init_postinstall = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/util/dist/postinstall.mjs"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/util/dist/postinstall.mjs"() {
       getDefaultsFromPostinstall = () => {
       };
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/util/dist/index.esm2017.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/util/dist/index.esm2017.js
   function deepCopy(value) {
     return deepExtend(void 0, value);
   }
@@ -821,7 +667,7 @@ POSSIBILITY OF SUCH DAMAGE.
     return service && service._delegate ? service._delegate : service;
   }
   var CONSTANTS, assert, assertionError, stringToByteArray$1, byteArrayToString, base64, DecodeBase64StringError, base64Encode, base64urlEncodeWithoutPadding, base64Decode, getDefaultsFromGlobal, getDefaultsFromEnvVariable, getDefaultsFromCookie, getDefaults, getDefaultEmulatorHost, getDefaultEmulatorHostnameAndPort, getDefaultAppConfig, getExperimentalSetting, Deferred, emulatorStatus, previouslyDismissed, ERROR_NAME, FirebaseError, ErrorFactory, PATTERN, decode, isValidFormat, isAdmin, Sha1, ObserverProxy, stringToByteArray, stringLength, MAX_VALUE_MILLIS, init_index_esm2017 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/util/dist/index.esm2017.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/util/dist/index.esm2017.js"() {
       init_postinstall();
       /**
        * @license
@@ -1655,7 +1501,7 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/component/dist/esm/index.esm2017.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/component/dist/esm/index.esm2017.js
   function normalizeIdentifierForFactory(identifier) {
     return identifier === DEFAULT_ENTRY_NAME ? void 0 : identifier;
   }
@@ -1663,7 +1509,7 @@ POSSIBILITY OF SUCH DAMAGE.
     return component.instantiationMode === "EAGER";
   }
   var Component, DEFAULT_ENTRY_NAME, Provider, ComponentContainer, init_index_esm20172 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/component/dist/esm/index.esm2017.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/component/dist/esm/index.esm2017.js"() {
       init_index_esm2017();
       Component = class {
         /**
@@ -1933,9 +1779,9 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/logger/dist/esm/index.esm2017.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/logger/dist/esm/index.esm2017.js
   var instances, LogLevel, levelStringToEnum, defaultLogLevel, ConsoleMethod, defaultLogHandler, Logger, init_index_esm20173 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/logger/dist/esm/index.esm2017.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/logger/dist/esm/index.esm2017.js"() {
       /**
        * @license
        * Copyright 2017 Google LLC
@@ -2035,7 +1881,7 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/idb/build/wrap-idb-value.js
+  // ../../../tmp/VChess-deps/node_modules/idb/build/wrap-idb-value.js
   function getIdbProxyableTypes() {
     return idbProxyableTypes || (idbProxyableTypes = [
       IDBDatabase,
@@ -2108,7 +1954,7 @@ POSSIBILITY OF SUCH DAMAGE.
     return newValue !== value && (transformCache.set(value, newValue), reverseTransformCache.set(newValue, value)), newValue;
   }
   var instanceOfAny, idbProxyableTypes, cursorAdvanceMethods, cursorRequestMap, transactionDoneMap, transactionStoreNamesMap, transformCache, reverseTransformCache, idbProxyTraps, unwrap, init_wrap_idb_value = __esm({
-    "../../../tmp/rookroom-deps/node_modules/idb/build/wrap-idb-value.js"() {
+    "../../../tmp/VChess-deps/node_modules/idb/build/wrap-idb-value.js"() {
       instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
       cursorRequestMap = /* @__PURE__ */ new WeakMap(), transactionDoneMap = /* @__PURE__ */ new WeakMap(), transactionStoreNamesMap = /* @__PURE__ */ new WeakMap(), transformCache = /* @__PURE__ */ new WeakMap(), reverseTransformCache = /* @__PURE__ */ new WeakMap();
       idbProxyTraps = {
@@ -2134,7 +1980,7 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/idb/build/index.js
+  // ../../../tmp/VChess-deps/node_modules/idb/build/index.js
   function openDB(name5, version5, { blocked, upgrade, blocking, terminated } = {}) {
     let request = indexedDB.open(name5, version5), openPromise = wrap(request);
     return upgrade && request.addEventListener("upgradeneeded", (event) => {
@@ -2170,7 +2016,7 @@ POSSIBILITY OF SUCH DAMAGE.
     return cachedMethods.set(prop, method), method;
   }
   var readMethods, writeMethods, cachedMethods, init_build = __esm({
-    "../../../tmp/rookroom-deps/node_modules/idb/build/index.js"() {
+    "../../../tmp/VChess-deps/node_modules/idb/build/index.js"() {
       init_wrap_idb_value();
       init_wrap_idb_value();
       readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"], writeMethods = ["put", "add", "delete", "clear"], cachedMethods = /* @__PURE__ */ new Map();
@@ -2182,7 +2028,7 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/app/dist/esm/index.esm2017.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/app/dist/esm/index.esm2017.js
   function isVersionServiceProvider(provider) {
     let component = provider.getComponent();
     return component?.type === "VERSION";
@@ -2369,7 +2215,7 @@ POSSIBILITY OF SUCH DAMAGE.
     )), registerVersion(name$q, version$1, variant), registerVersion(name$q, version$1, "esm2017"), registerVersion("fire-js", "");
   }
   var PlatformLoggerServiceImpl, name$q, version$1, logger, name$p, name$o, name$n, name$m, name$l, name$k, name$j, name$i, name$h, name$g, name$f, name$e, name$d, name$c, name$b, name$a, name$9, name$8, name$7, name$6, name$5, name$4, name$3, name$2, name$1, name, version, DEFAULT_ENTRY_NAME2, PLATFORM_LOG_STRING, _apps, _serverApps, _components, ERRORS, ERROR_FACTORY, FirebaseAppImpl, SDK_VERSION, DB_NAME, DB_VERSION, STORE_NAME, dbPromise, MAX_HEADER_BYTES, MAX_NUM_STORED_HEARTBEATS, HeartbeatServiceImpl, HeartbeatStorageImpl, init_index_esm20174 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/app/dist/esm/index.esm2017.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/app/dist/esm/index.esm2017.js"() {
       init_index_esm20172();
       init_index_esm20173();
       init_index_esm2017();
@@ -2757,9 +2603,9 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/firebase/app/dist/esm/index.esm.js
+  // ../../../tmp/VChess-deps/node_modules/firebase/app/dist/esm/index.esm.js
   var name2, version2, init_index_esm = __esm({
-    "../../../tmp/rookroom-deps/node_modules/firebase/app/dist/esm/index.esm.js"() {
+    "../../../tmp/VChess-deps/node_modules/firebase/app/dist/esm/index.esm.js"() {
       init_index_esm20174();
       init_index_esm20174();
       name2 = "firebase", version2 = "11.10.0";
@@ -2783,7 +2629,7 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/tslib/tslib.es6.mjs
+  // ../../../tmp/VChess-deps/node_modules/tslib/tslib.es6.mjs
   function __rest(s, e) {
     var t = {};
     for (var p in s) Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0 && (t[p] = s[p]);
@@ -2793,11 +2639,11 @@ POSSIBILITY OF SUCH DAMAGE.
     return t;
   }
   var init_tslib_es6 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/tslib/tslib.es6.mjs"() {
+    "../../../tmp/VChess-deps/node_modules/tslib/tslib.es6.mjs"() {
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/auth/dist/esm2017/index-35c79a8a.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/auth/dist/esm2017/index-35c79a8a.js
   function _prodErrorMap() {
     return {
       "dependent-sdk-initialized-before-auth": "Another Firebase SDK was initialized and is trying to use Auth before Auth is initialized. Please be sure to call `initializeAuth` or `getAuth` before starting any other Firebase SDK."
@@ -4222,7 +4068,7 @@ POSSIBILITY OF SUCH DAMAGE.
     return (_b = (_a = document.getElementsByTagName("head")) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : document;
   }
   var prodErrorMap, _DEFAULT_AUTH_ERROR_FACTORY, logClient, Delay, FetchProvider, SERVER_ERROR_MAP, CookieAuthProxiedEndpoints, DEFAULT_API_TIMEOUT_MS, NetworkTimeout, RecaptchaConfig, ProactiveRefresh, UserMetadata, StsTokenManager, UserImpl, instanceCache, InMemoryPersistence, inMemoryPersistence, PersistenceUserManager, AuthMiddlewareQueue, MINIMUM_MIN_PASSWORD_LENGTH, PasswordPolicyImpl, AuthImpl, Subscription, externalJSProvider, MockGreCAPTCHATopLevel, MockGreCAPTCHA, RECAPTCHA_ENTERPRISE_VERIFIER_TYPE, FAKE_TOKEN, RecaptchaEnterpriseVerifier, AuthCredential, EmailAuthCredential, IDP_REQUEST_URI$1, OAuthCredential, VERIFY_PHONE_NUMBER_FOR_EXISTING_ERROR_MAP_, PhoneAuthCredential, ActionCodeURL, EmailAuthProvider, FederatedAuthProvider, BaseOAuthProvider, FacebookAuthProvider, GoogleAuthProvider, GithubAuthProvider, TwitterAuthProvider, UserCredentialImpl, MultiFactorError, STORAGE_AVAILABLE_KEY, BrowserPersistenceClass, _POLLING_INTERVAL_MS$1, IE10_LOCAL_STORAGE_SYNC_DELAY, BrowserLocalPersistence, browserLocalPersistence, POLLING_INTERVAL_MS, CookiePersistence, BrowserSessionPersistence, browserSessionPersistence, Receiver, Sender, DB_NAME2, DB_VERSION2, DB_OBJECTSTORE_NAME, DB_DATA_KEYPATH, DBPromise, _POLLING_INTERVAL_MS, _TRANSACTION_RETRY_COUNT, IndexedDBLocalPersistence, indexedDBLocalPersistence, _JSLOAD_CALLBACK, NETWORK_TIMEOUT_DELAY, RECAPTCHA_VERIFIER_TYPE, PhoneAuthProvider, IdpCredential, AbstractPopupRedirectOperation, _POLL_WINDOW_CLOSE_TIMEOUT, PopupOperation, PENDING_REDIRECT_KEY, redirectOutcomeMap, RedirectAction, EVENT_DUPLICATION_CACHE_DURATION_MS, AuthEventManager, IP_ADDRESS_REGEX, HTTP_REGEX, NETWORK_TIMEOUT, cachedGApiLoader, PING_TIMEOUT, IFRAME_PATH, EMULATED_IFRAME_PATH, IFRAME_ATTRIBUTES, EID_FROM_APIHOST, BASE_POPUP_OPTIONS, DEFAULT_WIDTH, DEFAULT_HEIGHT, TARGET_BLANK, FIREFOX_EMPTY_URL, AuthPopup, WIDGET_PATH, EMULATOR_WIDGET_PATH, FIREBASE_APP_CHECK_FRAGMENT_ID, WEB_STORAGE_SUPPORT_KEY, BrowserPopupRedirectResolver, browserPopupRedirectResolver, MultiFactorAssertionImpl, PhoneMultiFactorAssertionImpl, PhoneMultiFactorGenerator, TotpMultiFactorGenerator, TotpMultiFactorAssertionImpl, TotpSecret, name3, version3, AuthInterop, DEFAULT_ID_TOKEN_MAX_AGE, authIdTokenMaxAge, lastPostedIdToken, mintCookieFactory, init_index_35c79a8a = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/auth/dist/esm2017/index-35c79a8a.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/auth/dist/esm2017/index-35c79a8a.js"() {
       init_index_esm20174();
       init_index_esm2017();
       init_index_esm20173();
@@ -9058,9 +8904,9 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/auth/dist/esm2017/index.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/auth/dist/esm2017/index.js
   var init_esm2017 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/auth/dist/esm2017/index.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/auth/dist/esm2017/index.js"() {
       init_index_35c79a8a();
       init_index_esm20174();
       init_index_esm2017();
@@ -9069,14 +8915,14 @@ POSSIBILITY OF SUCH DAMAGE.
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/firebase/auth/dist/esm/index.esm.js
+  // ../../../tmp/VChess-deps/node_modules/firebase/auth/dist/esm/index.esm.js
   var init_index_esm2 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/firebase/auth/dist/esm/index.esm.js"() {
+    "../../../tmp/VChess-deps/node_modules/firebase/auth/dist/esm/index.esm.js"() {
       init_esm2017();
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/@firebase/database/dist/index.esm2017.js
+  // ../../../tmp/VChess-deps/node_modules/@firebase/database/dist/index.esm2017.js
   function setSDKVersion(version5) {
     SDK_VERSION2 = version5;
   }
@@ -10876,7 +10722,7 @@ POSSIBILITY OF SUCH DAMAGE.
     return SERVER_TIMESTAMP;
   }
   var name4, version4, SDK_VERSION2, DOMStorageWrapper, MemoryStorage, createStoragefor, PersistentStorage, SessionStorage, logClient2, LUIDGenerator, sha1, buildLogMessage_, logger2, firstLog_, enableLogging$1, log, logWrapper, error, fatal, warn, warnIfPageIsSecure, isInvalidJSONNumber, executeWhenDOMReady, MIN_NAME, MAX_NAME, nameCompare, stringCompare, requireKey, ObjectToUniqueKey, splitStringBySize, doubleToIEEE754String, isChromeExtensionContentScript, isWindowsStoreApp, INTEGER_REGEXP_, INTEGER_32_MIN, INTEGER_32_MAX, tryParseInt, exceptionGuard, beingCrawled, setTimeoutNonBlocking, AppCheckTokenProvider, FirebaseAuthTokenProvider, EmulatorTokenProvider, PROTOCOL_VERSION, VERSION_PARAM, TRANSPORT_SESSION_PARAM, REFERER_PARAM, FORGE_REF, FORGE_DOMAIN_RE, LAST_SESSION_PARAM, APPLICATION_ID_PARAM, APP_CHECK_TOKEN_PARAM, WEBSOCKET, LONG_POLLING, RepoInfo, StatsCollection, collections, reporters, PacketReceiver, FIREBASE_LONGPOLL_START_PARAM, FIREBASE_LONGPOLL_CLOSE_COMMAND, FIREBASE_LONGPOLL_COMMAND_CB_NAME, FIREBASE_LONGPOLL_DATA_CB_NAME, FIREBASE_LONGPOLL_ID_PARAM, FIREBASE_LONGPOLL_PW_PARAM, FIREBASE_LONGPOLL_SERIAL_PARAM, FIREBASE_LONGPOLL_CALLBACK_ID_PARAM, FIREBASE_LONGPOLL_SEGMENT_NUM_PARAM, FIREBASE_LONGPOLL_SEGMENTS_IN_PACKET, FIREBASE_LONGPOLL_DATA_PARAM, FIREBASE_LONGPOLL_DISCONN_FRAME_REQUEST_PARAM, MAX_URL_DATA_SIZE, SEG_HEADER_SIZE, MAX_PAYLOAD_SIZE, KEEPALIVE_REQUEST_INTERVAL, LP_CONNECT_TIMEOUT, BrowserPollConnection, FirebaseIFrameScriptHolder, WEBSOCKET_MAX_FRAME_SIZE, WEBSOCKET_KEEPALIVE_INTERVAL, WebSocketImpl, WebSocketConnection, TransportManager, UPGRADE_TIMEOUT, DELAY_BEFORE_SENDING_EXTRA_REQUESTS, BYTES_SENT_HEALTHY_OVERRIDE, BYTES_RECEIVED_HEALTHY_OVERRIDE, MESSAGE_TYPE, MESSAGE_DATA, CONTROL_SHUTDOWN, CONTROL_RESET, CONTROL_ERROR, CONTROL_PONG, SWITCH_ACK, END_TRANSMISSION, PING, SERVER_HELLO, Connection, ServerActions, EventEmitter, OnlineMonitor, MAX_PATH_DEPTH, MAX_PATH_LENGTH_BYTES, Path, ValidationPath, VisibilityMonitor, RECONNECT_MIN_DELAY, RECONNECT_MAX_DELAY_DEFAULT, RECONNECT_MAX_DELAY_FOR_ADMINS, RECONNECT_DELAY_MULTIPLIER, RECONNECT_DELAY_RESET_TIMEOUT, SERVER_KILL_INTERRUPT_REASON, INVALID_TOKEN_THRESHOLD, PersistentConnection, NamedNode, Index, __EMPTY_NODE, KeyIndex, KEY_INDEX, SortedMapIterator, LLRBNode, LLRBEmptyNode, SortedMap, MAX_NODE$2, priorityHashText, validatePriorityNode, __childrenNodeConstructor, LeafNode, nodeFromJSON$1, MAX_NODE$1, PriorityIndex, PRIORITY_INDEX, LOG_2, Base12Num, buildChildSet, _defaultIndexMap, fallbackObject, IndexMap, EMPTY_NODE, ChildrenNode, MaxNode, MAX_NODE, USE_HINZE, PathIndex, ValueIndex, VALUE_INDEX, IndexedFilter, RangedFilter, LimitedFilter, QueryParams, ReadonlyRestClient, SnapshotHolder, StatsListener, FIRST_STATS_MIN_TIME, FIRST_STATS_MAX_TIME, REPORT_STATS_INTERVAL, StatsReporter, OperationType2, AckUserWrite, ListenComplete, Overwrite, Merge, CacheNode, EventGenerator, emptyChildrenSingleton, EmptyChildren, ImmutableTree, CompoundWrite, ChildChangeAccumulator, NoCompleteChildSource_, NO_COMPLETE_CHILD_SOURCE, WriteTreeCompleteChildSource, View, referenceConstructor$1, SyncPoint, referenceConstructor, syncTreeNextQueryTag_, SyncTree, ExistingValueProvider, DeferredValueProvider, generateWithValues, resolveDeferredLeafValue, resolveScalarDeferredValue, resolveComplexDeferredValue, resolveDeferredValueTree, resolveDeferredValueSnapshot, Tree, INVALID_KEY_REGEX_, INVALID_PATH_REGEX_, MAX_LEAF_SIZE_, isValidKey2, isValidPathString, isValidRootPathString, isValidPriority, validateFirebaseDataArg, validateFirebaseData, validateKey, validatePathString, validateRootPathString, validateWritablePath, validateUrl, EventQueue, INTERRUPT_REASON, MAX_TRANSACTION_RETRIES, Repo, parseRepoInfo, parseDatabaseURL, PUSH_CHARS, nextPushId, DataEvent, CancelEvent, CallbackContext, QueryImpl, ReferenceImpl, DataSnapshot, ValueEventRegistration, ChildEventRegistration, QueryConstraint, QueryEndAtConstraint, QueryStartAtConstraint, QueryOrderByChildConstraint, QueryEqualToValueConstraint, FIREBASE_DATABASE_EMULATOR_HOST_VAR, repos, useRestClient, Database, SERVER_TIMESTAMP, init_index_esm20175 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/@firebase/database/dist/index.esm2017.js"() {
+    "../../../tmp/VChess-deps/node_modules/@firebase/database/dist/index.esm2017.js"() {
       init_index_esm20174();
       init_index_esm20172();
       init_index_esm2017();
@@ -16000,14 +15846,14 @@ FIREBASE: `));
     }
   });
 
-  // ../../../tmp/rookroom-deps/node_modules/firebase/database/dist/esm/index.esm.js
+  // ../../../tmp/VChess-deps/node_modules/firebase/database/dist/esm/index.esm.js
   var init_index_esm3 = __esm({
-    "../../../tmp/rookroom-deps/node_modules/firebase/database/dist/esm/index.esm.js"() {
+    "../../../tmp/VChess-deps/node_modules/firebase/database/dist/esm/index.esm.js"() {
       init_index_esm20175();
     }
   });
 
-  // ../../../tmp/rookroom-profile.quaVo7/firebase-client.js
+  // ../../../tmp/VChess-profile.quaVo7/firebase-client.js
   var firebase_client_exports = {};
   __export(firebase_client_exports, {
     acceptGame: () => acceptGame,
@@ -16041,7 +15887,7 @@ FIREBASE: `));
       }
       let name5 = user.email?.endsWith(domain) ? user.email.slice(0, -domain.length) : "";
       if (!valid(name5)) {
-        onError(new Error("This Firebase account has no Rookroom username."));
+        onError(new Error("This Firebase account has no VChess username."));
         return;
       }
       let identity = { uid: user.uid, name: name5 };
@@ -16125,7 +15971,7 @@ FIREBASE: `));
     return set(path(`profiles/${uid}`), profile2);
   }
   var app, auth, db, handlePattern, domain, base, path, normalize, valid, leave, init_firebase_client = __esm({
-    "../../../tmp/rookroom-profile.quaVo7/firebase-client.js"() {
+    "../../../tmp/VChess-profile.quaVo7/firebase-client.js"() {
       init_index_esm();
       init_index_esm2();
       init_index_esm3();
@@ -16142,12 +15988,12 @@ FIREBASE: `));
       location.protocol === "file:" && forceWebSockets();
       db = getDatabase(app);
       ["localhost", "127.0.0.1"].includes(location.hostname) && new URLSearchParams(location.search).has("emulator") && (connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: !0 }), connectDatabaseEmulator(db, "127.0.0.1", 9e3));
-      handlePattern = /^[a-z0-9_]{3,20}$/, domain = "@gmail.com", base = "rookroom/v1", path = (relative) => ref(db, `${base}/${relative}`), normalize = (name5) => name5.trim().toLowerCase(), valid = (name5) => handlePattern.test(name5);
+      handlePattern = /^[a-z0-9_]{3,20}$/, domain = "@gmail.com", base = "VChess/v1", path = (relative) => ref(db, `${base}/${relative}`), normalize = (name5) => name5.trim().toLowerCase(), valid = (name5) => handlePattern.test(name5);
       leave = () => signOut(auth);
     }
   });
 
-  // ../../../tmp/rookroom-profile.quaVo7/dist/vendor/chess.js
+  // ../../../tmp/VChess-profile.quaVo7/dist/vendor/chess.js
   function rootNode(comment) {
     return comment !== null ? { comment, variations: [] } : { variations: [] };
   }
@@ -18131,7 +17977,7 @@ FIREBASE: `));
     }
   };
 
-  // ../../../tmp/rookroom-profile.quaVo7/dist/game.js
+  // ../../../tmp/VChess-profile.quaVo7/dist/game.js
   function encodeMove({ from, to, promotion }) {
     return from + to + (promotion ?? "-");
   }
@@ -18151,7 +17997,7 @@ FIREBASE: `));
     return position2.isCheckmate() ? `Checkmate \xB7 ${color === "White" ? "Black" : "White"} wins` : position2.isStalemate() ? "Draw \xB7 Stalemate" : position2.isInsufficientMaterial() ? "Draw \xB7 Insufficient material" : position2.isThreefoldRepetition() ? "Draw \xB7 Threefold repetition" : position2.isDrawByFiftyMoves() ? "Draw \xB7 Fifty-move rule" : `${color} to move${position2.isCheck() ? " \xB7 Check" : ""}`;
   }
 
-  // ../../../tmp/rookroom-profile.quaVo7/dist/app.js
+  // ../../../tmp/VChess-profile.quaVo7/dist/app.js
   init_clocks();
   var $ = (id) => document.getElementById(id), node2 = (tag, className, content) => {
     let element = document.createElement(tag);
@@ -18194,14 +18040,14 @@ FIREBASE: `));
   function rememberLocal() {
     try {
       let moves = "-" + local.history({ verbose: !0 }).map(encodeMove).join("");
-      localStorage.setItem(`rookroom:local:${account.uid}`, JSON.stringify({ moves, date: localStartedAt, outcome: localOutcome, draw: localDraw }));
+      localStorage.setItem(`VChess:local:${account.uid}`, JSON.stringify({ moves, date: localStartedAt, outcome: localOutcome, draw: localDraw }));
     } catch {
     }
   }
   function restoreLocal() {
     local = new Chess(), localOutcome = "", localStartedAt = void 0, localDraw = !1;
     try {
-      let saved = JSON.parse(localStorage.getItem(`rookroom:local:${account.uid}`) ?? "null");
+      let saved = JSON.parse(localStorage.getItem(`VChess:local:${account.uid}`) ?? "null");
       if (!saved) return;
       local = replay(saved.moves), localStartedAt = saved.date, localOutcome = saved.outcome ?? "", localDraw = !!saved.draw;
     } catch {
@@ -18292,7 +18138,7 @@ FIREBASE: `));
   }
   function savedLocalHistory() {
     try {
-      let records = JSON.parse(localStorage.getItem(`rookroom:history:${account.uid}`) ?? "[]");
+      let records = JSON.parse(localStorage.getItem(`VChess:history:${account.uid}`) ?? "[]");
       return Array.isArray(records) ? records : [];
     } catch {
       return [];
@@ -18300,7 +18146,7 @@ FIREBASE: `));
   }
   function persistLocalHistory() {
     try {
-      localStorage.setItem(`rookroom:history:${account.uid}`, JSON.stringify(localHistory));
+      localStorage.setItem(`VChess:history:${account.uid}`, JSON.stringify(localHistory));
     } catch {
     }
   }
