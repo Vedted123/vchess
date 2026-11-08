@@ -43,6 +43,23 @@ h1 span{color:var(--accent)}
 .player .color-label{display:block;margin-top:1px;font-size:10px;font-weight:650;color:var(--muted)}
 .player .turn-tag{margin-left:auto;color:#bbcbff;font-size:11px;background:#253554;padding:4px 8px;border-radius:20px}
 .board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--light)}
+.board.space-board{display:grid;grid-template-columns:1fr;aspect-ratio:auto;gap:11px;padding:8px;background:#101d2e;overflow:visible}
+.trek-deck{min-width:0;padding:7px;border:1px solid #3b516a;border-radius:8px;background:#1b2b42}
+.trek-deck h3{font-size:13px;margin:0 0 5px;color:#dfedfc;text-align:center}
+.trek-layout{display:grid;grid-template-columns:1fr 2fr 1fr;gap:7px;align-items:center}
+.trek-side{display:grid;gap:5px;align-self:stretch}
+.trek-dock{display:grid;align-content:center;min-width:0;gap:2px;border:1px dashed #546883;border-radius:5px}
+.trek-dock.white-attack{border:2px solid #bdddf2}.trek-dock.black-attack{border:2px solid #e9979a}
+.trek-squares{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-radius:4px;overflow:hidden}
+.trek-squares.trek-small{grid-template-columns:repeat(2,minmax(0,1fr))}
+.trek-pin{border:0;border-radius:3px;background:#263a56;color:#fff;font-size:clamp(8px,2vw,12px);padding:2px;cursor:pointer}
+.trek-pin:disabled{opacity:.62;cursor:default}.trek-pin.legal,.trek-pin[aria-pressed=true]{background:#79d8fb;color:#172735;font-weight:800}
+.trek-squares .coord{font-size:clamp(6px,1vw,10px)}
+#predator-credit{font-size:11px;color:var(--muted)}
+#predator-credit a{color:inherit}
+.mini-grid{display:grid;gap:7px;max-width:285px;margin:auto}.mini-grid button{aspect-ratio:1}
+.reactor-target{background:#8cddff!important;color:#123450!important}
+@media(max-width:410px){.board.space-board{gap:7px;padding:4px}.trek-layout{gap:3px}}
 .square{display:grid;place-items:center;aspect-ratio:1;position:relative;border:0;padding:0;background:var(--light);color:#405340;container-type:inline-size;touch-action:manipulation}
 .square.dark{background:var(--dark);color:#fff5da}
 .square.last{background:#b4ba70;color:#263b28}
@@ -157,8 +174,9 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 .variant-note{color:var(--muted);font-size:12px;line-height:1.5;margin:10px 0 0}
 #challenge-form label[for=time-control]{margin-top:12px}
 .piece-glyph.diddy,.piece-glyph.mystery{font:800 45cqw/1 system-ui,sans-serif;-webkit-text-stroke:0}
-.piece-glyph.diddy{color:#f4ddff;background:#572c73;border:2px solid #a57ac4;border-radius:50%;width:65%;height:65%;display:grid;place-items:center}
-.piece-glyph.diddy.white{color:#4a1a60;background:#efe1ff;border-color:#744d9b}
+.piece-glyph.diddy{color:#f4ddff;background:#572c73;border:2px solid #22253c;border-radius:50%;width:78%;height:78%;display:grid;place-items:center}
+.piece-glyph.diddy{background-image:url(data:image/jpeg;base64,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);background-size:210%;background-position:52% 19%}
+.piece-glyph.diddy.white{color:#4a1a60;background-color:#efe1ff;border-color:#fff7e7}
 .piece-glyph.mystery{color:#e5eefb;background:#273a59;border:2px solid #a6b6cf;border-radius:50%;width:56%;height:56%;display:grid;place-items:center}
 .piece-glyph.mystery.white{color:#1b2d48;background:#e2ebfb;border-color:#526a89}
 #move-list{position:relative}
@@ -278,6 +296,8 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
           <div class="game-actions"><button class="button primary" id="lock-setup">Ready</button><button class="button subtle" id="reset-setup">Reset setup</button></div>
         </div>
         <p class="variant-note" id="variant-note" hidden></p>
+        <p class="variant-note" id="trek-credit" hidden><a href="https://meder.spacechess.org/3dschach/chess3d.htm">Tri-Dimensional Chess rules by Jens Meder and collaborators</a></p>
+        <p id="predator-credit" hidden>Sean Combs photo by <a href="https://commons.wikimedia.org/wiki/File:Sean_Combs_2010.jpg">Reckless Dream Photography</a>, cropped for the board, <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</p>
         <p class="variant-note" id="capture-note" hidden></p>
         <div class="history"><h3>Move history <span id="move-count">0</span></h3><div id="move-list" aria-label="Move history"></div></div>
       </section>
@@ -340,7 +360,7 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
   <p id="challenge-clock-help">Minutes per player + seconds added after each move.</p>
   <form id="challenge-form">
     <label for="chess-variant">Chess variant</label>
-    <select id="chess-variant"><option value="classic">Classic Chess</option><option value="predator">Predator Chess</option><option value="fog">Fog Chess</option><option value="minigame">Random Minigame Chess</option><option value="royale">Chess Royale</option></select>
+    <select id="chess-variant"><option value="classic">Classic Chess</option><option value="predator">Predator Chess</option><option value="fog">Fog Chess</option><option value="minigame">Random Minigame Chess</option><option value="royale">Chess Royale</option><option value="double">Double Move Chess</option><option value="space">3D Chess (Star Trek)</option></select>
     <p class="variant-note" id="challenge-variant-note" hidden></p>
     <label id="time-control-label" for="time-control">Time control</label>
     <select id="time-control" required></select>
@@ -2408,6 +2428,15 @@ POSSIBILITY OF SUCH DAMAGE.
     if (variant !== "predator") return moves;
     let allowed = moves.filter((move) => (move.captured !== "q" || move.piece === "k") && move.promotion !== "q");
     if (chess.isCheck()) return allowed;
+    const own = chess.turn(), board = chess.board();
+    const protectedDiddy = board.some((rank, y) => rank.some((piece, x) => {
+      if (piece?.type !== "q" || piece.color !== own) return false;
+      return [-1, 0, 1].some(dy => [-1, 0, 1].some(dx => {
+        const neighbor = board[y + dy]?.[x + dx];
+        return neighbor?.color === own && (neighbor.type === "b" || neighbor.type === "n");
+      }));
+    }));
+    if (protectedDiddy) return allowed;
     let forced = allowed.filter((move) => move.piece === "q" && ["p", "n", "b"].includes(move.captured));
     return forced.length ? forced : allowed;
   }
@@ -2425,7 +2454,7 @@ POSSIBILITY OF SUCH DAMAGE.
   var variantNames, defaultSetup, setupLimit, init_variants = __esm({
     "../../../tmp/vchess-variants.6AbeGu/dist/variants.js"() {
       init_chess();
-      variantNames = { classic: "Classic Chess", predator: "Predator Chess", fog: "Fog Chess", minigame: "Random Minigame Chess", royale: "Chess Royale" }, defaultSetup = "rnbqkbnrpppppppp", setupLimit = 6e4;
+      variantNames = { classic: "Classic Chess", predator: "Predator Chess", fog: "Fog Chess", minigame: "Random Minigame Chess", royale: "Chess Royale", double: "Double Move Chess", space: "3D Chess (Star Trek)" }, defaultSetup = "rnbqkbnrpppppppp", setupLimit = 6e4;
     }
   });
 
@@ -18040,7 +18069,8 @@ FIREBASE: `));
       resigned: "-",
       ...makeClock(control, serverTimestamp()),
       ...variant !== "classic" ? { variant } : {},
-      ...variant === "minigame" ? { miniNext: arcadeRandom(3, 5) } : {}
+      ...variant === "minigame" ? { miniNext: arcadeRandom(3, 5) } : {},
+      ...variant === "royale" ? { royaleVersion: 2 } : {}
     }), game.key;
   }
   function saveGame(key, record) {
@@ -18064,7 +18094,7 @@ FIREBASE: `));
       startedAt: timestamp
     });
   }
-  function playMove(key, game, move, mini) {
+  function playMove(key, game, move, mini, doublePosition) {
     let next = { ...game, ...advanceClock(game, serverTimestamp()) };
     if (game.draw && game.draw !== game.turn) delete next.draw;
     if (mini) {
@@ -18072,7 +18102,9 @@ FIREBASE: `));
       delete next.miniMove;
       Object.assign(next, mini);
     }
-    return saveGame(key, { ...next, moves: game.moves + move, turn: otherColor(game.turn) });
+    if (doublePosition?.second) next.doubleStep = 1;
+    else delete next.doubleStep;
+    return saveGame(key, { ...next, moves: game.moves + move, turn: doublePosition?.turn() ?? otherColor(game.turn) });
   }
   function resolveChallenge(key, game, move) {
     return saveGame(key, { ...game, miniMove: move, clockAt: serverTimestamp() });
@@ -18126,23 +18158,321 @@ FIREBASE: `));
   init_chess();
   init_variants();
   function encodeMove({ from, to, promotion }) {
-    return from + to + (promotion ?? "-");
+    const coordinates = from.length === 3 ? encodeSpaceSquare(from) + encodeSpaceSquare(to) : from + to;
+    return coordinates + (promotion ?? "-");
   }
   function replay(moves, game) {
-    if (typeof moves != "string" || !/^-(?:[a-h][1-8][a-h][1-8][qrbn-])*$/.test(moves))
-      throw new Error("Invalid move history.");
-    let variant = game?.variant, position2 = variant === "fog" ? fogPosition(game) : new Chess();
+    const variant = game?.variant, space = variant === "space";
+    const notation = space ? /^-(?:(?:[01][0-9a-z]|2[0-3]){2}[qrbn-])*$/ : /^-(?:[a-h][1-8][a-h][1-8][qrbn-])*$/;
+    if (typeof moves !== "string" || !notation.test(moves)) throw new Error("Invalid move history.");
+    const chess = space ? new SpaceChess() : variant === "double" ? new DoubleChess() : variant === "fog" ? fogPosition(game) : new Chess();
     for (let index = 1; index < moves.length; index += 5) {
-      if (variantEnd(position2, variant)) throw new Error("A move was played after the game ended.");
-      let from = moves.slice(index, index + 2), to = moves.slice(index + 2, index + 4), choice = moves[index + 4], promotion = choice === "-" ? void 0 : choice;
-      if (variant === "predator" && !legalMoves(position2, variant).some((move) => move.from === from && move.to === to && move.promotion === promotion)) throw new Error("Illegal Predator Chess move.");
-      if (position2.move({ from, to, promotion }).promotion !== promotion) throw new Error("Invalid promotion.");
+      if (variantEnd(chess, variant)) throw new Error("A move was played after the game ended.");
+      let from = moves.slice(index, index + 2), to = moves.slice(index + 2, index + 4);
+      if (space) {
+        from = spaceSquares[parseInt(from, 36)];
+        to = spaceSquares[parseInt(to, 36)];
+        if (!from || !to) throw new Error("Invalid 3D square.");
+      }
+      const choice = moves[index + 4], promotion = choice === "-" ? undefined : choice;
+      if (variant === "predator" && !legalMoves(chess, variant).some(move => move.from === from && move.to === to && move.promotion === promotion))
+        throw new Error("Illegal Predator Chess move.");
+      if (chess.move({ from, to, promotion }).promotion !== promotion) throw new Error("Invalid promotion.");
     }
-    return position2;
+    return chess;
   }
+  // Meder's Star Trek board has three fixed decks and twelve pins for four
+  // movable boards. Pieces move in the overhead projection and land on a deck.
+  const trekFiles = "zabcde";
+  const trekDecks = {
+    W: { title: "White deck", x: 1, y: 1, size: 4 },
+    N: { title: "Neutral deck", x: 1, y: 3, size: 4 },
+    B: { title: "Black deck", x: 1, y: 5, size: 4 }
+  };
+  const trekAttackIds = ["A", "C", "D", "E"];
+  const trekPins = [0, 4, 2, 6, 4, 8];
+  const trekNeighbors = [[2, 3], [1, 3, 4], [1, 2, 4, 5], [2, 3, 5, 6], [3, 4, 6], [4, 5]];
+  const trekPinNames = ["QL", "KL"].flatMap(side => trekPins.map((_, index) => side + (index + 1)));
+  function trekCells(id, size) {
+    return Array.from({ length: size * size }, (_, i) => id + (i % size) + Math.floor(i / size));
+  }
+  const spaceSquares = [...Object.keys(trekDecks).flatMap(id => trekCells(id, 4)),
+    ...trekAttackIds.flatMap(id => trekCells(id, 2)), ...trekPinNames];
+  function encodeSpaceSquare(square) {
+    return spaceSquares.indexOf(square).toString(36).padStart(2, "0");
+  }
+
+  class SpaceChess {
+    constructor() {
+      this.side = "w";
+      this.log = [];
+      this.quiet = 0;
+      this.seen = new Map();
+      this.cells = new Map();
+      this.pins = { A: "QL1", C: "KL1", D: "QL6", E: "KL6" };
+      this.passant = null;
+      this.geometry = this.buildGeometry();
+      for (const [color, main, queen, king, rear, pawns, home] of [
+        ["w", "W", "A", "C", 0, 1, 0], ["b", "B", "D", "E", 1, 0, 3]
+      ]) {
+        const place = (id, rank, pieces) => [...pieces].forEach((type, x) =>
+          this.cells.set(id + x + rank, { type, color, moved: false }));
+        place(main, home, "nbbn");
+        place(main, color === "w" ? 1 : 2, "pppp");
+        place(queen, rear, "rq");
+        place(king, rear, "kr");
+        place(queen, pawns, "pp");
+        place(king, pawns, "pp");
+      }
+      this.remember();
+    }
+    turn() { return this.side; }
+    get(square) { return this.cells.get(square); }
+    history() { return this.log.slice(); }
+    pinFor(id) { return this.pins[id]; }
+    boardAt(pin) { return trekAttackIds.find(id => this.pins[id] === pin); }
+    boardOwner(id) { return id === "A" || id === "C" ? "w" : "b"; }
+    buildGeometry() {
+      const board = new Map();
+      for (const square of spaceSquares.slice(0, 64)) {
+        const id = square[0], pin = this.pins[id];
+        const origin = trekDecks[id] ?? { x: pin[0] === "Q" ? 0 : 4, y: trekPins[Number(pin[2]) - 1] };
+        board.set(square, { x: origin.x + Number(square[1]), y: origin.y + Number(square[2]) });
+      }
+      return board;
+    }
+    label(square) {
+      const coord = this.geometry.get(square);
+      return coord ? trekFiles[coord.x] + coord.y + (this.pins[square[0]] ?? square[0]) : square;
+    }
+    occupiedColumns() {
+      const occupied = new Set();
+      for (const square of this.cells.keys()) {
+        const point = this.geometry.get(square);
+        occupied.add(point.x + 6 * point.y);
+      }
+      return occupied;
+    }
+    remember() {
+      const activePassant = this.passant && [...this.cells].some(([from, piece]) =>
+        piece.color === this.side && piece.type === "p" && [...this.geometry.keys()].some(to =>
+          this.canReach(from, to, piece, this.occupiedColumns()) === "passant"));
+      this.key = this.side + trekPinNames.map(pin => this.boardAt(pin) ?? "-").join("") +
+        spaceSquares.slice(0, 64).map(square => {
+          const piece = this.get(square);
+          if (!piece) return ".";
+          const rights = "prk".includes(piece.type) && !piece.moved ? "!" : "";
+          return (piece.color === "w" ? piece.type.toUpperCase() : piece.type) + rights;
+        }).join("") + (activePassant ? this.passant.square : "");
+      this.seen.set(this.key, (this.seen.get(this.key) ?? 0) + 1);
+    }
+    canReach(from, to, piece, occupied, attacks = false) {
+      const start = this.geometry.get(from), end = this.geometry.get(to), victim = this.get(to);
+      const dx = end.x - start.x, dy = end.y - start.y, x = Math.abs(dx), y = Math.abs(dy);
+      if ((!x && !y) || victim?.color === piece.color) return false;
+      switch (piece.type) {
+        case "p": {
+          const forward = piece.color === "w" ? 1 : -1;
+          if (x === 1 && dy === forward) {
+            if (attacks || victim) return true;
+            return this.passant?.x === end.x && this.passant.y === end.y ? "passant" : false;
+          }
+          if (attacks || x || victim) return false;
+          if (dy === forward) return true;
+          return dy === 2 * forward && !piece.moved && !occupied.has(start.x + 6 * (start.y + forward));
+        }
+        case "n": return x * y === 2;
+        case "k": return Math.max(x, y) === 1;
+        case "b": if (x !== y) return false; break;
+        case "r": if (x && y) return false; break;
+        case "q": if (x && y && x !== y) return false; break;
+      }
+      for (let step = 1; step < Math.max(x, y); step++) {
+        if (occupied.has(start.x + step * Math.sign(dx) + 6 * (start.y + step * Math.sign(dy)))) return false;
+      }
+      return true;
+    }
+    isCheck() {
+      const king = [...this.cells].find(([, piece]) => piece.type === "k" && piece.color === this.side)?.[0];
+      const occupied = this.occupiedColumns();
+      return !!king && [...this.cells].some(([from, piece]) =>
+        piece.color !== this.side && this.canReach(from, king, piece, occupied, true));
+    }
+    promotes(square, color) {
+      const point = this.geometry.get(square), white = color === "w";
+      if (point.x === 0 || point.x === 5) return point.y === (white ? 9 : 0);
+      if (point.y === (white ? 9 : 0)) return true;
+      if (point.y !== (white ? 8 : 1)) return false;
+      return ![...this.geometry.values()].some(coord => coord.x === point.x && coord.y === (white ? 9 : 0));
+    }
+    *castleMoves() {
+      if (this.log.length < 2 || this.isCheck()) return;
+      const white = this.side === "w", rank = white ? 0 : 1, pin = white ? 1 : 6;
+      const kingId = white ? "C" : "E", queenId = white ? "A" : "D";
+      const from = kingId + "0" + rank, king = this.get(from);
+      if (king?.type !== "k" || king.color !== this.side || king.moved || this.pins[kingId] !== "KL" + pin) return;
+      for (const [id, prefix, rookFile] of [[kingId, "KL", 1], [queenId, "QL", 0]]) {
+        const rookFrom = id + rookFile + rank, rook = this.get(rookFrom), to = id + "1" + rank;
+        if (rook?.type !== "r" || rook.color !== this.side || rook.moved || this.pins[id] !== prefix + pin) continue;
+        if (id === queenId && this.get(to)) continue;
+        yield { from, to, rookFrom, castle: true, san: id === kingId ? "O-O" : "O-O-O", piece: "k" };
+      }
+    }
+    *attackBoardMoves() {
+      for (const id of trekAttackIds) {
+        const from = this.pins[id], index = Number(from[2]) - 1;
+        const riders = trekCells(id, 2).filter(square => this.get(square));
+        if (riders.length > 1 || (riders.length ? this.get(riders[0]).color : this.boardOwner(id)) !== this.side) continue;
+        const across = (from[0] === "Q" ? "KL" : "QL") + from[2];
+        for (const to of [across, ...trekNeighbors[index].map(pin => from.slice(0, 2) + pin)]) {
+          if (this.boardAt(to)) continue;
+          const destinationY = trekPins[Number(to[2]) - 1];
+          if (riders.length && (destinationY - trekPins[index]) * (this.side === "w" ? 1 : -1) < 0) continue;
+          yield { from, to, board: id, rider: riders[0], san: from + "–" + to };
+        }
+      }
+    }
+    apply(move) {
+      this.passant = null;
+      if (move.board) {
+        this.pins = { ...this.pins, [move.board]: move.to };
+        this.geometry = this.buildGeometry();
+        if (move.rider) this.cells.set(move.rider, { ...this.get(move.rider), moved: true });
+      } else {
+        const piece = this.get(move.from);
+        this.cells.delete(move.from);
+        if (move.enPassant) this.cells.delete(move.enPassant);
+        if (move.castle) {
+          const rook = this.get(move.rookFrom);
+          this.cells.delete(move.rookFrom);
+          this.cells.set(move.from, { ...rook, moved: true });
+        }
+        this.cells.set(move.to, { ...piece, moved: true });
+        const start = this.geometry.get(move.from), end = this.geometry.get(move.to);
+        if (piece.type === "p" && Math.abs(end.y - start.y) === 2) {
+          this.passant = { square: move.to, x: end.x, y: (start.y + end.y) / 2 };
+        }
+      }
+      let promoted = false;
+      for (const [square, piece] of this.cells) {
+        if (piece.type !== "p" || !this.promotes(square, piece.color)) continue;
+        const type = square === (move.rider ?? move.to) ? move.promotion ?? "q" : "q";
+        this.cells.set(square, { ...piece, type, moved: true });
+        promoted = true;
+      }
+      return promoted;
+    }
+    moves() {
+      if (this.legal) return this.legal;
+      const candidates = [...this.castleMoves(), ...this.attackBoardMoves()];
+      const occupied = this.occupiedColumns();
+      for (const [from, piece] of this.cells) {
+        if (piece.color !== this.side) continue;
+        for (const to of this.geometry.keys()) {
+          const reach = this.canReach(from, to, piece, occupied);
+          if (!reach || this.get(to)?.type === "k") continue;
+          const enPassant = reach === "passant" ? this.passant.square : null;
+          const captured = this.get(enPassant ?? to)?.type;
+          candidates.push({ from, to, enPassant, captured, piece: piece.type,
+            san: this.label(from) + (captured ? "×" : "–") + this.label(to) });
+        }
+      }
+      const legal = [], cells = this.cells, pins = this.pins, geometry = this.geometry, passant = this.passant;
+      for (const candidate of candidates) {
+        const target = candidate.rider ?? candidate.to;
+        const movingPawn = candidate.board ? candidate.rider && cells.get(candidate.rider).type === "p" : candidate.piece === "p";
+        if (candidate.board) {
+          this.pins = { ...pins, [candidate.board]: candidate.to };
+          this.geometry = this.buildGeometry();
+        }
+        const promotions = movingPawn && this.promotes(target, this.side) ? "qrbn" : [undefined];
+        this.pins = pins;
+        this.geometry = geometry;
+        for (const promotion of promotions) {
+          const move = { ...candidate, color: this.side, promotion,
+            san: candidate.san + (promotion ? "=" + promotion.toUpperCase() : "") };
+          this.cells = new Map(cells);
+          this.apply(move);
+          if (!this.isCheck()) legal.push(move);
+          this.cells = cells;
+          this.pins = pins;
+          this.geometry = geometry;
+          this.passant = passant;
+        }
+      }
+      return this.legal = legal;
+    }
+    move(choice) {
+      const move = this.moves().find(candidate => encodeMove(candidate) === encodeMove(choice));
+      if (!move) throw new Error("Illegal Star Trek Chess move.");
+      const pawnMoved = move.piece === "p" || this.get(move.rider)?.type === "p";
+      const promoted = this.apply(move);
+      this.legal = null;
+      this.quiet = move.captured || pawnMoved || promoted ? 0 : this.quiet + 1;
+      this.side = otherColor(this.side);
+      this.log.push(move);
+      this.remember();
+      return move;
+    }
+    isCheckmate() { return this.isCheck() && !this.moves().length; }
+    isStalemate() { return !this.isCheck() && !this.moves().length; }
+    isInsufficientMaterial() { return this.cells.size === 2; }
+    isThreefoldRepetition() { return (this.seen.get(this.key) ?? 0) >= 3; }
+    isDrawByFiftyMoves() { return this.quiet >= 100; }
+    isGameOver() {
+      return this.isInsufficientMaterial() || this.isThreefoldRepetition() || this.isDrawByFiftyMoves() || !this.moves().length;
+    }
+  }
+
+  class DoubleChess {
+    constructor() {
+      this.chess = new Chess();
+      this.second = false;
+      this.log = [];
+      this.seen = new Map();
+      this.remember();
+    }
+    get(square) { return this.chess.get(square); }
+    turn() { return this.chess.turn(); }
+    isCheck() { return this.chess.isCheck(); }
+    isCheckmate() { return this.chess.isCheckmate(); }
+    isStalemate() { return this.chess.isStalemate(); }
+    isInsufficientMaterial() { return this.chess.isInsufficientMaterial(); }
+    isDrawByFiftyMoves() { return this.chess.isDrawByFiftyMoves(); }
+    isThreefoldRepetition() { return this.seen.get(this.key) >= 3; }
+    isGameOver() {
+      return this.isCheckmate() || this.isStalemate() || this.isInsufficientMaterial() ||
+        this.isDrawByFiftyMoves() || this.isThreefoldRepetition();
+    }
+    history() { return this.log.slice(); }
+    moves() { return this.chess.moves({ verbose: true }).filter(move => move.captured !== "k"); }
+    remember() {
+      this.key = this.chess.fen().split(" ").slice(0, 4).join(" ") + this.second;
+      this.seen.set(this.key, (this.seen.get(this.key) ?? 0) + 1);
+    }
+    move(choice) {
+      if (!this.moves().some(move => encodeMove(move) === encodeMove(choice))) throw new Error("Illegal Double Move Chess move.");
+      const move = this.chess.move(choice);
+      const fen = this.chess.fen().split(" ");
+      if (this.second) {
+        this.second = false;
+      } else {
+        const next = new Chess([fen[0], move.color, fen[2], "-", fen[4], fen[5]].join(" "));
+        if (next.moves({ verbose: true }).some(move => move.captured !== "k")) {
+          this.chess = next;
+          this.second = true;
+          move.san = move.san.replace(/[+#]$/, "");
+        }
+      }
+      this.log.push(move);
+      this.remember();
+      return move;
+    }
+  }
+
   function describe(position2) {
     let color = position2.turn() === "w" ? "White" : "Black";
-    return position2.isCheckmate() ? `Checkmate \xB7 ${color === "White" ? "Black" : "White"} wins` : position2.isStalemate() ? "Draw \xB7 Stalemate" : position2.isInsufficientMaterial() ? "Draw \xB7 Insufficient material" : position2.isThreefoldRepetition() ? "Draw \xB7 Threefold repetition" : position2.isDrawByFiftyMoves() ? "Draw \xB7 Fifty-move rule" : `${color} to move${position2.isCheck() ? " \xB7 Check" : ""}`;
+    return position2.isCheckmate() ? `Checkmate \xB7 ${color === "White" ? "Black" : "White"} wins` : position2.isStalemate() ? "Draw \xB7 Stalemate" : position2.isInsufficientMaterial() ? "Draw \xB7 Insufficient material" : position2.isThreefoldRepetition() ? "Draw \xB7 Threefold repetition" : position2.isDrawByFiftyMoves() ? "Draw · Fifty-move rule" : `${color} to move${position2.isCheck() ? " \xB7 Check" : ""}`;
   }
 
   // ../../../tmp/vchess-variants.6AbeGu/dist/app.js
@@ -18152,9 +18482,11 @@ FIREBASE: `));
     let element = document.createElement(tag);
     return element.className = className, content !== void 0 && (element.textContent = content), element;
   }, pieces = { k: "\u265A", q: "\u265B", r: "\u265C", b: "\u265D", n: "\u265E", p: "\u265F" }, pieceNames = { k: "king", q: "queen", r: "rook", b: "bishop", n: "knight", p: "pawn" }, files = "abcdefgh", empty = new Chess(), promotionDialog = $("promotion-dialog"), onlineApi, account, subscriptions = [], incomingFriends = {}, outgoingFriends = {}, incomingGames = {}, outgoingGames = {}, mode = "online", gameId = null, onlinePosition = null, lastOnlineMoves = null, selected = null, orientation = "w", creatingAccount = !1, moving = !1, noticeTimer, page = "play", review, challengePeer, waitingForGame, serverOffset = 0, flagAttempts = /* @__PURE__ */ new Set(), clockReady = !1, hiddenGames = {},  profile = {}, rating = 200, fogDrafts = /* @__PURE__ */ new Map(), setupAttempts = /* @__PURE__ */ new Set(), lockingSetup = !1, variantNotes = {
-    predator: "The Diddy replaces the queen. If it has a legal capture of a pawn, knight, or bishop, you must make one of those captures unless your king is in check. Only a king can capture a Diddy, which wins immediately. Pawns promote to a rook, bishop, or knight.",
+    predator: "The Diddy replaces the queen. If it has a legal capture of a pawn, knight, or bishop, you must make one of those captures unless your king is in check or a friendly bishop or knight is on any of the eight adjacent squares. Only a king can capture a Diddy, which wins immediately. Pawns promote to a rook, bishop, or knight.",
+    double: "Play two moves in a row before handing over the turn. Your king must stay safe on both moves. A check is answered after the second move.",
+    space: "Star Trek Tri-Dimensional Chess uses three decks and four movable attack boards. Pieces move in the overhead projection and can land on a different deck. Select a pin label to move an eligible attack board. A pawn exposed on its promotion rank by a departing attack board automatically becomes a queen.",
     minigame: "Every 3–5 turns, the player to move gets a minigame. The chess clock pauses during the challenge. Lose and you’ll be shown the random legal move you must play.",
-    royale: "A real-time battle with your friend. Deploy cards on your half and destroy the enemy king tower to win. If both king towers survive five minutes, the battle is a draw.",
+    royale: "A real-time battle with your friend. Deploy cards on your half and destroy the enemy king tower to win. Troops cross the river at two bridges. If both king towers survive five minutes, the player with more rook towers wins. A tie is a draw.",
     fog: "You have one minute to swap pieces on your two home ranks. Keep your king on its back rank. Enemy pieces stay hidden until captured. Coordinate notation conceals the moving piece. Castling is off."
   }, avatars = { rook: "\u265C", knight: "\u265E", queen: "\u265B", bishop: "\u265D", pawn: "\u265F" }, positions = /* @__PURE__ */ new Map();
   const arcadeRandom = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
@@ -18332,6 +18664,41 @@ FIREBASE: `));
   }
 
   const minigames = {
+    reactor: {
+      name: "Reactor Rush",
+      goal: () => arcadePick([5, 6, 7]),
+      describe: (goal) => `Tap the glowing tile ${goal} times in 12 seconds. A wrong tile ends the challenge.`,
+      limit: () => 12,
+      play({ goal, finish, progress, signal }) {
+        const grid = node2("div", "mini-grid");
+        grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+        const cells = [];
+        let hits = 0, target = -1;
+        function light() {
+          const old = target;
+          target = (old + arcadeRandom(1, 8)) % 9;
+          for (const [index, cell] of cells.entries()) {
+            cell.textContent = index === target ? "●" : "·";
+            cell.classList.toggle("reactor-target", index === target);
+            cell.setAttribute("aria-label", `Tile ${index + 1}${index === target ? ", glowing" : ""}`);
+          }
+          progress(`${hits} / ${goal} hits`);
+        }
+        for (let index = 0; index < 9; index++) {
+          const cell = node2("button", "button subtle");
+          cell.type = "button";
+          cell.addEventListener("click", () => {
+            if (index !== target) finish(false);
+            else if (++hits >= goal) finish(true);
+            else light();
+          }, { signal });
+          cells.push(cell);
+          grid.append(cell);
+        }
+        miniArea.append(grid);
+        light();
+      }
+    },
     clicker: {
       name: "Clicker",
       goal: () => ({ clicks: arcadePick([25, 30, 40, 45]), seconds: arcadePick([12, 15, 18]) }),
@@ -18609,14 +18976,18 @@ FIREBASE: `));
   const royaleCanvas = $("royale-board");
   const royaleCtx = royaleCanvas.getContext("2d");
   const arenaWidth = 32, arenaHeight = 18, tile = 30;
+  const bridgeCenters = [7.5, 24.5], riverTop = 8.5, riverBottom = 9.5, bridgeHalfWidth = 1.5;
+  const balancedSpeeds = { pawn: 3.1, bishop: 2.45, knight: 1.95, rook: 1.3, queen: .72 };
+  const rollerStats = { width: 1.5, depth: .55, range: 5 };
+  const legacyRoller = { width: 3, depth: 1, range: 9 };
   const royaleColors = { w: "#65cbff", b: "#ff818a" };
   const royaleCards = {
     tower: { name: "Chess Tower", icon: "♜", cost: 4, info: "1,200 HP · 4-tile beam · 30 DPS + 250 every 1.2s on one target · lasts 30s" },
     pawns: { name: "Pawn Army", icon: "♟", cost: 3, info: "15 pawns · 81 HP and 81 DPS each" },
-    knight: { name: "Knight", icon: "♞", cost: 2, info: "700 HP · 100 melee DPS · 136 splash damage on jumps from 4–7 tiles · 2.2s jump cooldown" },
+    knight: { name: "Knight", icon: "♞", cost: 3, info: "700 HP · 100 melee DPS · 136 splash damage on jumps from 3–5 tiles · 2.2s jump cooldown" },
     bishop: { name: "Bishop", icon: "♝", cost: 4, info: "750 HP · 217 damage every 2s · 5-tile range" },
     rooks: { name: "Rook Pair", icon: "♜", cost: 5, info: "2 rooks · 1,341 HP each · 274 damage every 1.4s each" },
-    roller: { name: "Rolling Pawn", icon: "▰", cost: 2, info: "3 tiles across × 1 deep · rolls 9 tiles · 250 troop damage plus knockback" },
+    roller: { name: "Rolling Pawn", icon: "▰", cost: 2, info: "1.5 tiles across × 0.55 deep · rolls up to 5 tiles · 250 troop damage plus knockback" },
     rocket: { name: "Bishop Rocket", icon: "➶", cost: 5, info: "Place anywhere · 900 troop damage · 400 damage to crown towers · 1.6-tile blast" },
     queen: { name: "Queen", icon: "♛", cost: 6, info: "1,500 HP · 1,000 damage every 2s · melee" }
   };
@@ -18640,6 +19011,7 @@ FIREBASE: `));
   function buildRoyaleUI() {
     const guide = $("royale-guide");
     guide.append(node2("p", "", "Select a card, then choose a tile. The blue player deploys on the bottom half and the red player deploys on the top half. Destroy the enemy king tower to win. Each side starts with 5 elixir, gains 1 every 2.8 seconds, and can bank up to 10."));
+    guide.append(node2("p", "", "Troops cross the river at the two bridges. Pawn Army moves fastest, followed by bishops, knights, rooks and queens. If both kings survive, remaining rook towers decide the result."));
     guide.append(node2("p", "", "Rook towers have 3,052 HP and fire rocks for 136 DPS. King towers have 4,500 HP and fire for 150 DPS. Both have a 5-tile range. With a keyboard, focus the arena and use the arrow keys and Enter."));
     const list = node2("ul", "");
     for (const card of Object.values(royaleCards)) {
@@ -18692,7 +19064,13 @@ FIREBASE: `));
       ui.bar.value = elixir;
       ui.hand.hidden = !own;
       for (const [key, button] of Object.entries(ui.buttons)) {
-        button.disabled = !ready || !own || !!deploying || !battle || !!battle.result || elixir < royaleCards[key].cost;
+        button.disabled = !ready || !own || !!deploying || !battle || !!battle.result || elixir < royaleCost(battle, key);
+        if (key === "knight") {
+          const cost = royaleCost(battle, key);
+          button.lastElementChild.textContent = String(cost);
+          button.setAttribute("aria-label", `${colorName(side)} Knight, ${cost} elixir`);
+          button.title = battle?.version === 1 ? "700 HP · 100 melee DPS · 136 splash damage on jumps from 4–7 tiles" : royaleCards.knight.info;
+        }
         button.setAttribute("aria-pressed", String(activeCard?.side === side && activeCard.key === key));
       }
     }
@@ -18703,8 +19081,8 @@ FIREBASE: `));
       countdown > 0 ? `Battle starts in ${countdown}s.` :
       deploymentMessage || "Select a card, then choose a tile to deploy it."));
   }
-  function createRoyaleBattle() {
-    const state = { time: 0, tick: 0, applied: 0, elixir: { w: 5, b: 5 }, nextElixir: 2.8, entities: [], effects: [], result: "" };
+  function createRoyaleBattle(version = 2) {
+    const state = { version, time: 0, tick: 0, applied: 0, elixir: { w: 5, b: 5 }, nextElixir: 2.8, entities: [], effects: [], result: "" };
     for (const side of ["w", "b"]) {
       spawnRoyale(state, "king", side, 16, side === "w" ? 16.75 : 1.25);
       for (const x of [7.5, 24.5]) spawnRoyale(state, "side", side, x, side === "w" ? 16.75 : 1.25);
@@ -18712,7 +19090,8 @@ FIREBASE: `));
     return state;
   }
   function spawnRoyale(state, type, side, x, y) {
-    const stats = royaleTroops[type];
+    const base = royaleTroops[type];
+    const stats = state.version === 2 && base.speed ? { ...base, speed: balancedSpeeds[type] } : base;
     const unit = {
       type, side, stats, hp: stats.hp, x, y, ready: state.time + .25,
       expires: type === "beam" ? state.time + 30 : Infinity
@@ -18735,8 +19114,31 @@ FIREBASE: `));
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const arenaDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const crownTower = (unit) => unit.type === "side" || unit.type === "king";
+  function royaleCost(state, key) {
+    return state?.version === 1 && key === "knight" ? 2 : royaleCards[key].cost;
+  }
+  function clearRiverPath(from, to) {
+    const dy = to.y - from.y;
+    if (Math.max(from.y, to.y) <= riverTop || Math.min(from.y, to.y) >= riverBottom) return true;
+    const xAt = y => from.x + (to.x - from.x) * clamp((y - from.y) / dy, 0, 1);
+    const edges = dy ? [xAt(riverTop), xAt(riverBottom)] : [from.x, to.x];
+    return bridgeCenters.some(center => edges.every(x => Math.abs(x - center) <= bridgeHalfWidth));
+  }
+  function bridgeWaypoint(unit, target) {
+    const bank = target.y < (riverTop + riverBottom) / 2 ? riverTop : riverBottom;
+    if (unit.y > riverTop && unit.y < riverBottom) return { x: unit.x, y: bank };
+    const entrance = unit.y <= riverTop ? riverTop : riverBottom;
+    const cost = x => Math.hypot(unit.x - x, unit.y - entrance) + Math.hypot(target.x - x, target.y - bank);
+    const x = cost(bridgeCenters[0]) <= cost(bridgeCenters[1]) ? bridgeCenters[0] : bridgeCenters[1];
+    return { x, y: Math.abs(unit.x - x) < .00001 && Math.abs(unit.y - entrance) < .00001 ? bank : entrance };
+  }
+  function rollingEnd(state, x, y, direction) {
+    if (state?.version !== 2) return y + legacyRoller.range * direction;
+    const end = clamp(y + rollerStats.range * direction, rollerStats.depth / 2, arenaHeight - rollerStats.depth / 2);
+    return clearRiverPath({ x, y }, { x, y: end }) ? end : direction < 0 ? riverBottom : riverTop;
+  }
   function canDeploy(state, side, key, x, y) {
-    if (!state || state.result || !royaleCards[key] || state.elixir[side] < royaleCards[key].cost ||
+    if (!state || state.result || !royaleCards[key] || state.elixir[side] < royaleCost(state, key) ||
         x < 0 || x >= arenaWidth || y < 0 || y >= arenaHeight) return false;
     if (key === "rocket") return true;
     if ((y >= arenaHeight / 2) !== (side === "w")) return false;
@@ -18745,19 +19147,22 @@ FIREBASE: `));
   }
   function deployRoyale(state, side, key, x, y) {
     if (!canDeploy(state, side, key, x, y)) return false;
-    state.elixir[side] -= royaleCards[key].cost;
+    state.elixir[side] -= royaleCost(state, key);
     const direction = side === "w" ? -1 : 1;
     if (key === "rocket") {
       state.effects.push({ kind: "rocket", side, x, y, start: state.time, end: state.time + .6 });
     } else if (key === "roller") {
-      state.effects.push({ kind: "roller", side, x, y, from: y, direction, hit: new Set(), start: state.time, end: state.time + .9 });
+      const size = state.version === 2 ? rollerStats : legacyRoller;
+      state.effects.push({ kind: "roller", side, x, y, from: y, direction, size,
+        destination: rollingEnd(state, x, y, direction), hit: new Set(), start: state.time, end: state.time + .9 });
     } else {
       const offsets = key === "pawns" ? Array.from({ length: 15 }, (_, i) => [(i % 5 - 2) * .49, (Math.floor(i / 5) - 1) * .49])
         : key === "rooks" ? [[-.55, 0], [.55, 0]] : [[0, 0]];
       const type = { pawns: "pawn", rooks: "rook", tower: "beam" }[key] ?? key;
       for (const [dx, dy] of offsets) {
         spawnRoyale(state, type, side, clamp(x + dx, .25, arenaWidth - .25),
-          clamp(y + dy, side === "w" ? 9.24 : .25, side === "w" ? 17.75 : 8.76));
+          clamp(y + dy, side === "w" ? state.version === 2 ? riverBottom : 9.24 : .25,
+            side === "w" ? 17.75 : state.version === 2 ? riverTop : 8.76));
       }
     }
     return true;
@@ -18846,14 +19251,17 @@ FIREBASE: `));
       }
       if (effect.kind === "roller") {
         const before = effect.y;
-        effect.y = effect.from + 9 * effect.direction * Math.min(1, (state.time - effect.start) / .9);
+        effect.y = effect.from + (effect.destination - effect.from) * Math.min(1, (state.time - effect.start) / .9);
         for (const unit of state.entities) {
           if (unit.side === effect.side || unit.hp <= 0 || !unit.stats.speed || effect.hit.has(unit) ||
-              Math.abs(unit.x - effect.x) > 1.5 + unit.stats.radius ||
-              unit.y < Math.min(before, effect.y) - .5 - unit.stats.radius ||
-              unit.y > Math.max(before, effect.y) + .5 + unit.stats.radius) continue;
+              Math.abs(unit.x - effect.x) > effect.size.width / 2 + unit.stats.radius ||
+              unit.y < Math.min(before, effect.y) - effect.size.depth / 2 - unit.stats.radius ||
+              unit.y > Math.max(before, effect.y) + effect.size.depth / 2 + unit.stats.radius) continue;
           unit.hp -= 250;
-          unit.y = clamp(unit.y + effect.direction * 1.1, .35, 17.65);
+          if (state.version === 1 || !unit.jump) {
+            const destination = { x: unit.x, y: clamp(unit.y + effect.direction * 1.1, .35, 17.65) };
+            if (state.version === 1 || clearRiverPath(unit, destination)) unit.y = destination.y;
+          }
           effect.hit.add(unit);
         }
       }
@@ -18897,11 +19305,14 @@ FIREBASE: `));
     if (!target) return;
     const distance = arenaDistance(unit, target);
     const range = stats.range + (stats.speed && stats.range < 2 ? target.stats.radius : 0);
-    if (unit.type === "knight" && distance >= 4 && distance <= 7 && state.time >= (unit.jumpReady ?? 0)) {
+    const modern = state.version === 2;
+    if (unit.type === "knight" && distance >= (modern ? 3 : 4) && distance <= (modern ? 5 : 7) && state.time >= (unit.jumpReady ?? 0)) {
       const offset = Math.min(distance, target.stats.radius + .42);
-      unit.jump = { start: state.time, fromX: unit.x, fromY: unit.y,
-        x: target.x + (unit.x - target.x) * offset / distance, y: target.y + (unit.y - target.y) * offset / distance };
-      return;
+      const x = target.x + (unit.x - target.x) * offset / distance, y = target.y + (unit.y - target.y) * offset / distance;
+      if (!modern || clearRiverPath(unit, { x, y })) {
+        unit.jump = { start: state.time, fromX: unit.x, fromY: unit.y, x, y };
+        return;
+      }
     }
     if (distance <= range) {
       if (state.time < unit.ready) return;
@@ -18910,9 +19321,14 @@ FIREBASE: `));
       const kind = crownTower(unit) ? "rock" : stats.range >= 5 ? "shot" : "strike";
       state.effects.push({ kind, x: target.x, y: target.y, fromX: unit.x, fromY: unit.y, side: unit.side, start: state.time, end: state.time + .22 });
     } else if (stats.speed) {
-      const step = Math.min(stats.speed * dt, distance - range);
-      unit.x += (target.x - unit.x) / distance * step;
-      unit.y += (target.y - unit.y) / distance * step;
+      const clear = !modern || clearRiverPath(unit, target);
+      const next = clear ? target : bridgeWaypoint(unit, target);
+      const remaining = arenaDistance(unit, next);
+      const step = Math.min(stats.speed * dt, clear ? distance - range : remaining);
+      if (remaining > 0) {
+        unit.x += (next.x - unit.x) / remaining * step;
+        unit.y += (next.y - unit.y) / remaining * step;
+      }
     }
   }
 
@@ -18934,8 +19350,11 @@ FIREBASE: `));
       state.outcome = whiteKing ? "w" : blackKing ? "b" : "draw";
       state.result = whiteKing ? "White wins · Black king tower destroyed" : blackKing ? "Black wins · White king tower destroyed" : "Draw · Both king towers destroyed";
     } else if (state.tick >= Math.round(royaleDuration / royaleStep)) {
-      state.outcome = "draw";
-      state.result = "Draw · Both king towers survived";
+      const alive = units => units.filter(unit => unit.type === "side" && unit.hp > 0).length;
+      const difference = state.version === 2 ? alive(white) - alive(black) : 0;
+      state.outcome = difference > 0 ? "w" : difference < 0 ? "b" : "draw";
+      state.result = difference ? `${colorName(state.outcome)} wins · More rook towers survived`
+        : state.version === 2 ? "Draw · Equal rook towers survived" : "Draw · Both king towers survived";
     }
   }
   function royaleCircle(x, y, radius, color) {
@@ -18967,8 +19386,19 @@ FIREBASE: `));
       ctx.lineTo(width, y * tile);
     }
     ctx.stroke();
-    ctx.fillStyle = "#bdadc3";
-    ctx.fillRect(0, height / 2 - 1, width, 2);
+    if (battle?.version === 2) {
+      ctx.fillStyle = "#246183";
+      ctx.fillRect(0, riverTop * tile, width, (riverBottom - riverTop) * tile);
+      for (const x of bridgeCenters) {
+        ctx.fillStyle = "#d3ad79";
+        ctx.fillRect((x - bridgeHalfWidth) * tile, riverTop * tile, bridgeHalfWidth * 2 * tile, (riverBottom - riverTop) * tile);
+        ctx.strokeStyle = "#765639";
+        ctx.strokeRect((x - bridgeHalfWidth) * tile, riverTop * tile, bridgeHalfWidth * 2 * tile, (riverBottom - riverTop) * tile);
+      }
+    } else {
+      ctx.fillStyle = "#bdadc3";
+      ctx.fillRect(0, height / 2 - 1, width, 2);
+    }
     ctx.font = "bold 13px system-ui";
     ctx.textAlign = "left";
     ctx.fillStyle = "#f0a4ab";
@@ -18982,8 +19412,10 @@ FIREBASE: `));
       ctx.fillStyle = valid ? "#f2d7ff66" : "#ff505a55";
       if (key === "rocket") royaleCircle(cursor.x, cursor.y, 1.6, ctx.fillStyle);
       else if (key === "roller") {
-        const end = cursor.y + (side === "w" ? -9 : 9);
-        ctx.fillRect((cursor.x - 1.5) * tile, (Math.min(cursor.y, end) - .5) * tile, 3 * tile, 10 * tile);
+        const size = battle?.version === 2 ? rollerStats : legacyRoller;
+        const end = rollingEnd(battle, cursor.x, cursor.y, side === "w" ? -1 : 1);
+        ctx.fillRect((cursor.x - size.width / 2) * tile, (Math.min(cursor.y, end) - size.depth / 2) * tile,
+          size.width * tile, (Math.abs(cursor.y - end) + size.depth) * tile);
       }
       ctx.strokeStyle = valid ? "#fff" : "#ff797f";
       ctx.strokeRect((cursor.x - .5) * tile + 1, (cursor.y - .5) * tile + 1, tile - 2, tile - 2);
@@ -19031,9 +19463,9 @@ FIREBASE: `));
       const t = clamp((battle.time - effect.start) / (effect.end - effect.start), 0, 1);
       if (effect.kind === "roller") {
         ctx.fillStyle = "#a7754e";
-        ctx.fillRect((effect.x - 1.5) * tile, (effect.y - .5) * tile, 3 * tile, tile);
+        ctx.fillRect((effect.x - effect.size.width / 2) * tile, (effect.y - effect.size.depth / 2) * tile, effect.size.width * tile, effect.size.depth * tile);
         ctx.strokeStyle = "#ffd2a1";
-        ctx.strokeRect((effect.x - 1.5) * tile, (effect.y - .5) * tile, 3 * tile, tile);
+        ctx.strokeRect((effect.x - effect.size.width / 2) * tile, (effect.y - effect.size.depth / 2) * tile, effect.size.width * tile, effect.size.depth * tile);
       } else if (effect.kind === "rocket") {
         const origin = effect.side === "w" ? 18 : 0;
         const y = origin + (effect.y - origin) * t;
@@ -19070,7 +19502,7 @@ FIREBASE: `));
     let entry = royaleMatches.get(match);
     if (!entry) {
       if (royaleMatches.size >= 40) royaleMatches.delete(royaleMatches.keys().next().value);
-      entry = { state: createRoyaleBattle(), commands: [] };
+      entry = { state: createRoyaleBattle(game.royaleVersion ?? 1), commands: [] };
       royaleMatches.set(match, entry);
     }
     if (entry.source !== game.royaleCommands) {
@@ -19083,7 +19515,7 @@ FIREBASE: `));
       while (changed < previous.length && changed < commands.length &&
         previous[changed].id === commands[changed].id && previous[changed].at === commands[changed].at) changed++;
       if ((previous[changed]?.tick ?? Infinity) < entry.state.tick ||
-          (commands[changed]?.tick ?? Infinity) < entry.state.tick) entry.state = createRoyaleBattle();
+          (commands[changed]?.tick ?? Infinity) < entry.state.tick) entry.state = createRoyaleBattle(game.royaleVersion ?? 1);
       entry.commands = commands;
       entry.source = game.royaleCommands;
     }
@@ -19238,7 +19670,7 @@ FIREBASE: `));
     return `${playerName(game, outcome)} wins ${reason}`;
   }
   function isPlaying(game, chess) {
-    return game?.state === "active" && game.variant !== "royale" && !inSetup(game) && !!chess && !resultFor(game, chess);
+    return game?.state === "active" && game.variant !== "royale" && !inSetup(game) && !!chess && chess.turn() === game.turn && !resultFor(game, chess);
   }
   function tickClocks() {
     let game = currentGame();
@@ -19457,17 +19889,124 @@ FIREBASE: `));
     lockingSetup = !0, selected = null, renderBoard(), await perform(() => onlineApi.submitSetup(key, myColor(game), setupLayout(game))), lockingSetup = !1, gameId === key && renderGame();
   });
   function renderBoard() {
-    let chess = position(), game = mode === "review" ? review.record.game : currentGame(), setup = inSetup(game), fog = game?.variant === "fog", color = game ? myColor(game) : null, layout = setup ? setupLayout(game) : null, board = $("board"), focusedSquare = board.contains(document.activeElement) ? document.activeElement.dataset.square : null, last = chess.history({ verbose: !0 }).at(-1), legal = selected && canMove() ? matchLegalMoves(chess, game).filter((move) => move.from === selected) : [], displayFiles = orientation === "w" ? files : [...files].reverse().join(""), ranks = orientation === "w" ? "87654321" : "12345678", grid = document.createDocumentFragment();
-    for (let [row, rank2] of [...ranks].entries())
-      for (let [column, file2] of [...displayFiles].entries()) {
-        let square = file2 + rank2, setupType = setup ? layout[setupIndex(square, color)] : null, piece = setup ? setupType && { type: setupType, color } : chess.get(square), concealed = !!(piece && fog && piece.color !== color), diddy = piece?.type === "q" && game?.variant === "predator", pieceName = concealed ? "hidden piece" : diddy ? "Diddy" : pieceNames[piece?.type], cell = node2("button", `square${(row + column) % 2 ? " dark" : ""}`);
-        if (cell.type = "button", cell.dataset.square = square, cell.tabIndex = (focusedSquare ?? selected ?? displayFiles[0] + ranks[0]) === square ? 0 : -1, cell.setAttribute("aria-label", piece ? `${square}, ${piece.color === "w" ? "white" : "black"} ${pieceName}` : square), cell.setAttribute("aria-pressed", String(selected === square)), (last?.from === square || last?.to === square) && cell.classList.add("last"), selected === square && cell.classList.add("selected"), !setup && !concealed && piece?.type === "k" && piece.color === chess.turn() && chess.isCheck() && cell.classList.add("check"), legal.some((move) => move.to === square) && cell.classList.add("legal", ...piece ? ["capture"] : []), column === 0 && cell.append(node2("span", "coord rank", rank2)), row === 7 && cell.append(node2("span", "coord file", file2)), piece) {
-          let style = concealed ? "mystery" : diddy ? "diddy" : "", glyph = concealed ? "?" : diddy ? "D" : pieces[piece.type], graphic = node2("span", `piece-glyph ${style} ${piece.color === "w" ? "white" : ""}`, glyph);
-          graphic.setAttribute("aria-hidden", "true"), cell.append(graphic);
+    const chess = position(), game = mode === "review" ? review.record.game : currentGame();
+    if (game?.variant === "space") return renderTrekBoard(chess, game);
+    const setup = inSetup(game), fog = game?.variant === "fog";
+    const color = game ? myColor(game) : null, layout = setup ? setupLayout(game) : null;
+    const board = $("board"), active = document.activeElement;
+    const focusedSquare = board.contains(active) ? active.dataset.square : null;
+    const last = chess.history({ verbose: true }).at(-1);
+    const legal = selected && canMove() ? matchLegalMoves(chess, game).filter(move => move.from === selected) : [];
+    const displayFiles = orientation === "w" ? files : [...files].reverse().join("");
+    const ranks = orientation === "w" ? "87654321" : "12345678";
+    const grid = document.createDocumentFragment(), checked = !setup && chess.isCheck();
+    const tabSquare = focusedSquare ?? selected ?? displayFiles[0] + ranks[0];
+    board.classList.remove("space-board");
+    board.setAttribute("aria-label", "Chessboard");
+    for (const [row, rank] of [...ranks].entries()) {
+      for (const [column, file] of [...displayFiles].entries()) {
+        const square = file + rank, setupType = setup ? layout[setupIndex(square, color)] : null;
+        const piece = setup ? setupType && { type: setupType, color } : chess.get(square);
+        const concealed = !!(piece && fog && piece.color !== color);
+        const diddy = piece?.type === "q" && game?.variant === "predator";
+        const pieceName = concealed ? "hidden piece" : diddy ? "Diddy" : pieceNames[piece?.type];
+        const dark = (row + column) % 2;
+        const cell = node2("button", `square${dark ? " dark" : ""}`);
+        cell.type = "button";
+        cell.dataset.square = square;
+        cell.tabIndex = tabSquare === square ? 0 : -1;
+        cell.setAttribute("aria-label", piece ? `${square}, ${colorName(piece.color)} ${pieceName}` : square);
+        cell.setAttribute("aria-pressed", String(selected === square));
+        if (last?.from === square || last?.to === square) cell.classList.add("last");
+        if (selected === square) cell.classList.add("selected");
+        if (checked && !concealed && piece?.type === "k" && piece.color === chess.turn()) cell.classList.add("check");
+        if (legal.some(move => move.to === square)) cell.classList.add("legal", ...(piece ? ["capture"] : []));
+        if (column === 0) cell.append(node2("span", "coord rank", rank));
+        if (row === ranks.length - 1) cell.append(node2("span", "coord file", file));
+        if (piece) {
+          const style = concealed ? "mystery" : diddy ? "diddy" : "";
+          const glyph = concealed ? "?" : diddy ? "" : pieces[piece.type];
+          const graphic = node2("span", `piece-glyph ${style} ${piece.color === "w" ? "white" : ""}`, glyph);
+          graphic.setAttribute("aria-hidden", "true");
+          cell.append(graphic);
         }
         grid.append(cell);
       }
-    board.replaceChildren(grid), focusedSquare && board.querySelector(`[data-square="${focusedSquare}"]`)?.focus({ preventScroll: !0 }), playerRow($("top-player"), orientation === "w" ? "b" : "w", game), playerRow($("bottom-player"), orientation, game), tickClocks();
+    }
+    board.replaceChildren(grid);
+    if (focusedSquare) board.querySelector(`[data-square="${focusedSquare}"]`)?.focus({ preventScroll: true });
+    playerRow($("top-player"), otherColor(orientation), game);
+    playerRow($("bottom-player"), orientation, game);
+    tickClocks();
+  }
+  function renderTrekBoard(chess, game) {
+    const board = $("board"), focused = board.contains(document.activeElement) ? document.activeElement.dataset.square : null;
+    const position3d = chess instanceof SpaceChess ? chess : new SpaceChess();
+    const canAct = canMove(), moves = canAct ? position3d.moves() : [];
+    const legal = moves.filter(move => move.from === selected);
+    const checked = position3d.isCheck(), last = position3d.history().at(-1), reversed = orientation === "b";
+    const grid = document.createDocumentFragment();
+    board.classList.add("space-board");
+    board.setAttribute("aria-label", "Star Trek Tri-Dimensional Chess, three decks and four movable attack boards");
+    function squares(id, size) {
+      const layer = node2("div", size === 4 ? "trek-squares" : "trek-squares trek-small");
+      const cells = trekCells(id, size);
+      const order = cells.sort((a, b) => Number(b[2]) - Number(a[2]) || Number(a[1]) - Number(b[1]));
+      for (const square of reversed ? order.reverse() : order) {
+        const piece = position3d.get(square), { x, y } = position3d.geometry.get(square);
+        const cell = node2("button", `square${(x + y) % 2 ? "" : " dark"}`);
+        const label = position3d.label(square);
+        cell.type = "button";
+        cell.dataset.square = square;
+        cell.setAttribute("aria-label", piece ? `${label}, ${colorName(piece.color)} ${pieceNames[piece.type]}` : label);
+        cell.setAttribute("aria-pressed", String(selected === square));
+        if (last?.from === square || last?.to === square) cell.classList.add("last");
+        if (selected === square) cell.classList.add("selected");
+        if (checked && piece?.type === "k" && piece.color === position3d.turn()) cell.classList.add("check");
+        if (legal.some(move => move.to === square)) cell.classList.add("legal", ...(piece ? ["capture"] : []));
+        if (piece) {
+          const glyph = node2("span", `piece-glyph ${piece.color === "w" ? "white" : ""}`, pieces[piece.type]);
+          glyph.setAttribute("aria-hidden", "true");
+          cell.append(glyph);
+        }
+        cell.append(node2("span", "coord file", label.slice(0, 2)));
+        layer.append(cell);
+      }
+      return layer;
+    }
+    function dock(pin) {
+      const id = position3d.boardAt(pin);
+      const wrapper = node2("div", "trek-dock");
+      const button = node2("button", `trek-pin${legal.some(move => move.to === pin) ? " legal" : ""}`, id ? pin : `○ ${pin}`);
+      button.type = "button";
+      button.dataset.square = pin;
+      button.disabled = !moves.some(move => move.from === pin) && !legal.some(move => move.to === pin);
+      button.setAttribute("aria-label", id ? `Select attack board on ${pin}` : `Move attack board to ${pin}`);
+      button.setAttribute("aria-pressed", String(selected === pin));
+      wrapper.append(button);
+      if (id) {
+        wrapper.classList.add(position3d.boardOwner(id) === "w" ? "white-attack" : "black-attack");
+        wrapper.append(squares(id, 2));
+      }
+      return wrapper;
+    }
+    for (const [id, low, high] of reversed ? [["W", 1, 2], ["N", 3, 4], ["B", 5, 6]] : [["B", 5, 6], ["N", 3, 4], ["W", 1, 2]]) {
+      const deck = node2("section", "trek-deck");
+      deck.append(node2("h3", "", trekDecks[id].title));
+      const row = node2("div", "trek-layout"), left = node2("div", "trek-side"), right = node2("div", "trek-side");
+      for (const pin of reversed ? [low, high] : [high, low]) {
+        left.append(dock((reversed ? "KL" : "QL") + pin));
+        right.append(dock((reversed ? "QL" : "KL") + pin));
+      }
+      row.append(left, squares(id, 4), right);
+      deck.append(row);
+      grid.append(deck);
+    }
+    board.replaceChildren(grid);
+    if (focused) board.querySelector(`[data-square="${focused}"]`)?.focus({ preventScroll: true });
+    playerRow($("top-player"), otherColor(orientation), game);
+    playerRow($("bottom-player"), orientation, game);
+    tickClocks();
   }
   function renderGame() {
     let game = currentGame(), chess = position();
@@ -19489,6 +20028,9 @@ FIREBASE: `));
       let end = (review.record.moves.length - 1) / 5;
       status = `${review.record.result} \xB7 Move ${review.ply} of ${end}`;
     } else mode === "online" && (game ? inSetup(game) ? status = "Fog Chess setup" : onlinePosition ? resultFor(game, chess) ? status = resultFor(game, chess) : status = `${chess.turn() === myColor(game) ? "Your move" : `${playerName(game, chess.turn())} to move`}${chess.isCheck() ? " \xB7 Check" : ""}` : status = "This game contains an invalid move." : status = account ? "Online lobby" : "Sign in to play with friends.");
+    if (game?.variant === "double" && onlinePosition && !resultFor(game, chess)) {
+      status += ` · Move ${chess.second ? 2 : 1} of 2`;
+    }
     let statusText = $("game-status");
     statusText.textContent !== status && statusText.replaceChildren(node2("span", "status-dot"), document.createTextNode(status));
     const canAct = isPlaying(game, onlinePosition);
@@ -19505,6 +20047,8 @@ FIREBASE: `));
     $("draw-panel").querySelector(".game-actions").hidden = !canAnswer;
     const variant = shownGame?.variant;
     const note = variant === "minigame" && canAct ? minigameNote(game, chess) : variantNotes[variant];
+    $("predator-credit").hidden = variant !== "predator";
+    $("trek-credit").hidden = variant !== "space";
     $("variant-note").hidden = !note, $("variant-note").textContent = note ?? "", $("setup-panel").hidden = !inSetup(game);
     let last = chess.history({ verbose: !0 }).at(-1);
     $("capture-note").hidden = variant !== "fog" || !last?.captured, $("capture-note").textContent = last?.captured ? `Captured ${pieceNames[last.captured]} on ${last.to}.` : "";
@@ -19515,7 +20059,8 @@ FIREBASE: `));
       list.dataset.moves = listKey, list.replaceChildren(), moves.length || list.append(node2("p", "", "Moves will appear here."));
       for (let index = 0; index < moves.length; index += 2) {
         let row = node2("div", "move-row");
-        row.append(node2("span", "", `${index / 2 + 1}.`));
+        const label = variant === "double" ? `${Math.floor(index / 4) + 1}${index % 4 === 0 ? "W" : "B"}.` : `${index / 2 + 1}.`;
+        row.append(node2("span", "", label));
         for (let ply = index + 1; ply <= Math.min(moves.length, index + 2); ply++) {
           let entry = node2(mode === "review" ? "button" : "b", mode === "review" ? "move-jump" : "", moves[ply - 1]);
           mode === "review" && (entry.type = "button", entry.dataset.ply = ply, entry.setAttribute("aria-label", `Go to move ${ply}, ${moves[ply - 1]}`)), row.append(entry);
@@ -19561,7 +20106,9 @@ FIREBASE: `));
     let id = gameId;
     moving = true;
     renderGame();
-    await perform(() => onlineApi.playMove(id, game, encodeMove(move), mini));
+    const encoded = encodeMove(move);
+    const doublePosition = game.variant === "double" ? cachedPosition(game.moves + encoded, game) : undefined;
+    await perform(() => onlineApi.playMove(id, game, encoded, mini, doublePosition));
     moving = false;
     renderGame();
   }
@@ -19592,7 +20139,10 @@ FIREBASE: `));
         return;
       }
     }
-    selected = selected !== square && chess.get(square)?.color === chess.turn() ? square : null, renderBoard();
+    const selectable = game?.variant === "space" && trekPinNames.includes(square)
+      ? chess.moves().some(move => move.from === square) : chess.get(square)?.color === chess.turn();
+    selected = selected !== square && selectable ? square : null;
+    renderBoard();
   }
   $("board").addEventListener("click", (event) => {
     let square = event.target.closest("[data-square]");
@@ -19600,14 +20150,18 @@ FIREBASE: `));
   });
   $("board").addEventListener("keydown", (event) => {
     if (mode === "review") return;
-    let offset = { ArrowUp: -8, ArrowDown: 8, ArrowLeft: -1, ArrowRight: 1 }[event.key];
-    if (offset === void 0) return;
+    const space = currentGame()?.variant === "space";
+    const layer = space ? event.target.closest(".trek-squares") : $("board");
+    if (!layer) return;
+    const width = space ? layer.classList.contains("trek-small") ? 2 : 4 : 8;
+    const offset = { ArrowUp: -width, ArrowDown: width, ArrowLeft: -1, ArrowRight: 1 }[event.key];
+    if (offset === undefined) return;
     event.preventDefault();
-    let squares = [...$("board").children], index = squares.indexOf(event.target);
-    if (index < 0 || offset === -1 && index % 8 === 0 || offset === 1 && index % 8 === 7) return;
+    const squares = [...layer.children], index = squares.indexOf(event.target);
+    if (index < 0 || offset === -1 && index % width === 0 || offset === 1 && index % width === width - 1) return;
     let target = squares[index + offset];
     if (target) {
-      for (let cell of squares) cell.tabIndex = -1;
+      if (!space) for (let cell of squares) cell.tabIndex = -1;
       target.tabIndex = 0, target.focus();
     }
   });
