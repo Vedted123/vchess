@@ -20,7 +20,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #c3d0
 .top-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);font-weight:800;letter-spacing:-.03em;font-size:21px;line-height:1}
 .brand-icon,.panel-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#222f4b;color:var(--accent);font-family:Georgia,"DejaVu Sans",serif;font-size:27px}
-.brand-caption{display:block;margin-top:6px;color:var(--muted);font-size:9px;letter-spacing:.16em;font-weight:750}
 .header-note,.account-name{color:var(--muted);font-size:13px}
 .account{display:flex;align-items:center;gap:12px;min-width:0}
 .account-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -165,10 +164,6 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 #move-list{position:relative}
 .move-jump{padding:2px 5px;border:0;border-radius:4px;text-align:left;background:none;color:var(--ink);font:inherit;font-weight:650}
 .move-jump:hover,.move-jump[aria-current=step]{background:#30415a}
-.arcade-options{display:flex;align-items:center;gap:12px;margin:0 0 18px}
-.arcade-options label,.royale-actions label{color:var(--muted);font-size:13px;font-weight:700}
-.arcade-options select,.royale-actions select{width:auto;max-width:100%}
-#guest-play{margin-top:8px}
 #minigame-dialog{width:min(450px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto}
 #minigame-dialog h2{margin:5px 0 8px}
 #minigame-progress{min-height:20px;color:#b8d6ff;font-weight:700}
@@ -200,13 +195,13 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 .royale-guide{color:var(--muted);font-size:13px}
 .royale-guide summary{cursor:pointer}
 .royale-guide ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:7px 20px;padding-left:20px}
-@media(max-width:560px){.royale-hand{grid-template-columns:repeat(4,minmax(0,1fr))}.arcade-options{flex-wrap:wrap}}
+@media(max-width:560px){.royale-hand{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
 <body>
 <main class="auth-screen" id="auth-screen">
   <section class="auth-card" aria-labelledby="auth-title">
-  <div class="auth-brand"><span class="brand-icon" aria-hidden="true">♜</span><div>VChess<span class="brand-caption">CHESS CLUB</span></div></div>
+  <div class="auth-brand"><span class="brand-icon" aria-hidden="true">♜</span><div>VChess</div></div>
   <h2 id="auth-title">Sign in</h2>
   <p id="auth-description">Enter your username and password to join your friends.</p>
   <form id="auth-form">
@@ -217,13 +212,13 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
     <button class="button primary" id="auth-submit">Sign in</button>
   </form>
   <button id="switch-auth" class="text-button">Create an account</button>
-  <button id="guest-play" class="button subtle" type="button">Play locally as guest</button>
+
   </section>
 </main>
 <div id="game-screen" hidden>
 <header class="topbar" id="top">
   <div class="top-inner">
-    <a class="brand" href="#top"><span class="brand-icon" aria-hidden="true">♜</span><span>VChess<span class="brand-caption">CHESS CLUB</span></span></a>
+    <a class="brand" href="#top"><span class="brand-icon" aria-hidden="true">♜</span><span>VChess</span></a>
     <div class="menu-wrap">
       <button id="menu-toggle" class="button subtle menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <nav id="site-menu" class="site-menu" aria-label="Main navigation" hidden>
@@ -244,30 +239,18 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
     <h1>Play chess<span>.</span></h1>
     
   </div>
-  <nav class="tabs" id="play-tabs" aria-label="Game mode">
-    <button class="tab active" id="local-tab" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3v18M3 12h18"/></svg> Local play</button>
-    <button class="tab" id="online-tab" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg> Play online</button>
-  </nav>
-  <div id="local-options" class="arcade-options" hidden>
-    <label for="local-variant">Local variant</label>
-    <select id="local-variant">
-      <option value="classic">Classic Chess</option>
-      <option value="minigame">Random Minigame Chess</option>
-      <option value="royale">Chess Royale</option>
-    </select>
-  </div>
   <section id="royale-room" class="royale-room" aria-label="Chess Royale" hidden>
     <header class="royale-heading">
       <div><p class="eyebrow">REAL-TIME STRATEGY</p><h2>Chess Royale</h2></div>
       <div class="royale-actions">
-        <label>Opponent <select id="royale-opponent"><option value="cpu">Computer</option><option value="local">Two local players</option></select></label>
-        <button class="button primary" id="royale-start" type="button">Start battle</button>
+        <span id="royale-clock" aria-label="Battle time remaining"></span>
+        <button class="button subtle" id="royale-back" type="button">Back to lobby</button>
       </div>
     </header>
     <div id="royale-black" class="royale-player"></div>
     <canvas id="royale-board" width="960" height="540" tabindex="0" aria-label="32 by 18 battle arena. Use arrow keys to move the placement cursor and Enter to deploy."></canvas>
     <div id="royale-white" class="royale-player"></div>
-    <p id="royale-status" role="status">Start a battle, select a card, and choose a tile.</p>
+    <p id="royale-status" role="status">Waiting for the battle to begin.</p>
     <details class="royale-guide"><summary>Card stats and controls</summary><div id="royale-guide"></div></details>
   </section>
   <div class="layout" id="chess-layout">
@@ -278,9 +261,9 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
     </section>
     <aside class="sidebar">
       <section class="panel">
-        <div class="panel-header"><span class="panel-icon" aria-hidden="true">♞</span><div><p class="eyebrow" id="game-mode">LOCAL GAME</p><h2>Game room</h2></div></div>
+        <div class="panel-header"><span class="panel-icon" aria-hidden="true">♞</span><div><p class="eyebrow" id="game-mode">ONLINE LOBBY</p><h2>Game room</h2></div></div>
         <div class="status" aria-live="polite" id="game-status"></div>
-        <div class="game-actions"><button class="button subtle" id="flip-board">⇅ <span>Flip board</span></button><button class="button primary" id="new-game">New game</button><button class="button subtle" id="resign-game" hidden>Resign</button><button class="button subtle" id="offer-draw" hidden>Offer draw</button></div>
+        <div class="game-actions"><button class="button subtle" id="flip-board">⇅ <span>Flip board</span></button><button class="button subtle" id="resign-game" hidden>Resign</button><button class="button subtle" id="offer-draw" hidden>Offer draw</button></div>
         <div id="draw-panel" class="draw-panel" hidden>
           <p id="draw-message" role="status"></p>
           <div class="game-actions"><button class="button primary" id="accept-draw" hidden>Accept draw</button><button class="button subtle" id="decline-draw" hidden>Decline draw</button></div>
@@ -354,12 +337,12 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
 </dialog>
 <dialog id="challenge-dialog" aria-labelledby="challenge-title">
   <h2 id="challenge-title">Challenge a friend</h2>
-  <p>Minutes per player + seconds added after each move.</p>
+  <p id="challenge-clock-help">Minutes per player + seconds added after each move.</p>
   <form id="challenge-form">
     <label for="chess-variant">Chess variant</label>
-    <select id="chess-variant"><option value="classic">Classic Chess</option><option value="predator">Predator Chess</option><option value="fog">Fog Chess</option></select>
+    <select id="chess-variant"><option value="classic">Classic Chess</option><option value="predator">Predator Chess</option><option value="fog">Fog Chess</option><option value="minigame">Random Minigame Chess</option><option value="royale">Chess Royale</option></select>
     <p class="variant-note" id="challenge-variant-note" hidden></p>
-    <label for="time-control">Time control</label>
+    <label id="time-control-label" for="time-control">Time control</label>
     <select id="time-control" required></select>
     <p id="challenge-error" role="alert" hidden></p>
     <div class="game-actions"><button class="button primary" id="send-challenge">Send challenge</button><button class="button subtle" type="button" id="cancel-challenge">Cancel</button></div>
@@ -379,6 +362,7 @@ select{width:100%;font:inherit;color:var(--ink);background:#0c1626;border:1px so
   <div class="game-actions">
     <button id="minigame-start" class="button primary" type="button">Start challenge</button>
     <button id="minigame-forfeit" class="button subtle" type="button">Forfeit challenge</button>
+    <button id="minigame-back" class="button subtle" type="button">Back to lobby</button>
   </div>
 </dialog>
 <noscript><p class="shell">Enable JavaScript to play chess.</p></noscript>
@@ -2441,7 +2425,7 @@ POSSIBILITY OF SUCH DAMAGE.
   var variantNames, defaultSetup, setupLimit, init_variants = __esm({
     "../../../tmp/vchess-variants.6AbeGu/dist/variants.js"() {
       init_chess();
-      variantNames = { classic: "Classic Chess", predator: "Predator Chess", fog: "Fog Chess" }, defaultSetup = "rnbqkbnrpppppppp", setupLimit = 6e4;
+      variantNames = { classic: "Classic Chess", predator: "Predator Chess", fog: "Fog Chess", minigame: "Random Minigame Chess", royale: "Chess Royale" }, defaultSetup = "rnbqkbnrpppppppp", setupLimit = 6e4;
     }
   });
 
@@ -2462,7 +2446,7 @@ POSSIBILITY OF SUCH DAMAGE.
     };
   }
   function remaining(game, color, now2, running = !0) {
-    let prefix = color === "w" ? "white" : "black", bank = game[prefix + "Credit"] - game[prefix + "At"], elapsed = running && color === game.turn ? Math.max(0, now2 - game.clockAt) : 0;
+    let prefix = color === "w" ? "white" : "black", bank = game[prefix + "Credit"] - game[prefix + "At"], elapsed = running && !miniPending(game) && color === game.turn ? Math.max(0, now2 - game.clockAt) : 0;
     return Math.max(0, bank - elapsed);
   }
   function advanceClock(game, timestamp) {
@@ -17981,6 +17965,8 @@ FIREBASE: `));
     hideGame: () => hideGame,
     leave: () => leave,
     playMove: () => playMove,
+    resolveChallenge: () => resolveChallenge,
+    sendRoyaleCommand: () => sendRoyaleCommand,
     requestFriend: () => requestFriend,
     saveGame: () => saveGame,
     saveProfile: () => saveProfile,
@@ -18053,7 +18039,8 @@ FIREBASE: `));
       turn: "w",
       resigned: "-",
       ...makeClock(control, serverTimestamp()),
-      ...variant !== "classic" ? { variant } : {}
+      ...variant !== "classic" ? { variant } : {},
+      ...variant === "minigame" ? { miniNext: arcadeRandom(3, 5) } : {}
     }), game.key;
   }
   function saveGame(key, record) {
@@ -18077,13 +18064,21 @@ FIREBASE: `));
       startedAt: timestamp
     });
   }
-  function playMove(key, game, move) {
+  function playMove(key, game, move, mini) {
     let next = { ...game, ...advanceClock(game, serverTimestamp()) };
-    return game.draw && game.draw !== game.turn && delete next.draw, saveGame(key, {
-      ...next,
-      moves: game.moves + move,
-      turn: game.turn === "w" ? "b" : "w"
-    });
+    if (game.draw && game.draw !== game.turn) delete next.draw;
+    if (mini) {
+      delete next.miniChallenge;
+      delete next.miniMove;
+      Object.assign(next, mini);
+    }
+    return saveGame(key, { ...next, moves: game.moves + move, turn: otherColor(game.turn) });
+  }
+  function resolveChallenge(key, game, move) {
+    return saveGame(key, { ...game, miniMove: move, clockAt: serverTimestamp() });
+  }
+  function sendRoyaleCommand(key, side, card, x, y) {
+    return set(push(path(`games/${key}/royaleCommands`)), { side, card, x, y, at: serverTimestamp() });
   }
   function watchClock(callback) {
     return onValue(ref(db, ".info/serverTimeOffset"), (snapshot) => callback(snapshot.val() ?? 0));
@@ -18156,159 +18151,111 @@ FIREBASE: `));
   var $ = (id) => document.getElementById(id), node2 = (tag, className, content) => {
     let element = document.createElement(tag);
     return element.className = className, content !== void 0 && (element.textContent = content), element;
-  }, pieces = { k: "\u265A", q: "\u265B", r: "\u265C", b: "\u265D", n: "\u265E", p: "\u265F" }, pieceNames = { k: "king", q: "queen", r: "rook", b: "bishop", n: "knight", p: "pawn" }, files = "abcdefgh", local = new Chess(), empty = new Chess(), promotionDialog = $("promotion-dialog"), onlineApi, account, subscriptions = [], incomingFriends = {}, outgoingFriends = {}, incomingGames = {}, outgoingGames = {}, mode = "local", gameId = null, onlinePosition = null, lastOnlineMoves = null, selected = null, orientation = "w", localOrientation = "w", creatingAccount = !1, moving = !1, noticeTimer, page = "play", review, challengePeer, waitingForGame, serverOffset = 0, flagAttempts = /* @__PURE__ */ new Set(), clockReady = !1, hiddenGames = {}, localHistory = [], localStartedAt, localOutcome = "", localDraw = !1, profile = {}, rating = 200, fogDrafts = /* @__PURE__ */ new Map(), setupAttempts = /* @__PURE__ */ new Set(), lockingSetup = !1, variantNotes = {
+  }, pieces = { k: "\u265A", q: "\u265B", r: "\u265C", b: "\u265D", n: "\u265E", p: "\u265F" }, pieceNames = { k: "king", q: "queen", r: "rook", b: "bishop", n: "knight", p: "pawn" }, files = "abcdefgh", empty = new Chess(), promotionDialog = $("promotion-dialog"), onlineApi, account, subscriptions = [], incomingFriends = {}, outgoingFriends = {}, incomingGames = {}, outgoingGames = {}, mode = "online", gameId = null, onlinePosition = null, lastOnlineMoves = null, selected = null, orientation = "w", creatingAccount = !1, moving = !1, noticeTimer, page = "play", review, challengePeer, waitingForGame, serverOffset = 0, flagAttempts = /* @__PURE__ */ new Set(), clockReady = !1, hiddenGames = {},  profile = {}, rating = 200, fogDrafts = /* @__PURE__ */ new Map(), setupAttempts = /* @__PURE__ */ new Set(), lockingSetup = !1, variantNotes = {
     predator: "The Diddy replaces the queen. If it has a legal capture of a pawn, knight, or bishop, you must make one of those captures unless your king is in check. Only a king can capture a Diddy, which wins immediately. Pawns promote to a rook, bishop, or knight.",
+    minigame: "Every 3–5 turns, the player to move gets a minigame. The chess clock pauses during the challenge. Lose and you’ll be shown the random legal move you must play.",
+    royale: "A real-time battle with your friend. Deploy cards on your half and destroy the enemy king tower to win. If both king towers survive five minutes, the battle is a draw.",
     fog: "You have one minute to swap pieces on your two home ranks. Keep your king on its back rank. Enemy pieces stay hidden until captured. Coordinate notation conceals the moving piece. Castling is off."
   }, avatars = { rook: "\u265C", knight: "\u265E", queen: "\u265B", bishop: "\u265D", pawn: "\u265F" }, positions = /* @__PURE__ */ new Map();
-  // Local variants share the existing chessboard and move history.
   const arcadeRandom = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
   const arcadePick = (items) => items[arcadeRandom(0, items.length - 1)];
   const colorName = (color) => color === "w" ? "White" : "Black";
   const otherColor = (color) => color === "w" ? "b" : "w";
-  let guest = false, localVariant = "classic", royaleOpen = false, arcade = null;
-  let stopMinigame = null;
-  const arcadeStartTime = 5 * 60 * 1000;
   const minigameDialog = $("minigame-dialog");
+  let stopMinigame = null, minigameKey = null, miniResult = null;
 
-  function nextArcadeInterval(turn) {
-    const chosen = arcadePick(["w", "b"]);
-    return chosen === turn ? 4 : arcadePick([3, 5]);
-  }
-  function createArcade() {
-    return { next: nextArcadeInterval("w"), w: arcadeStartTime, b: arcadeStartTime, at: Date.now() };
-  }
-  function arcadeRemaining(color, at = Date.now()) {
-    const running = !arcade.pending && !localOutcome && color === local.turn();
-    return Math.max(0, arcade[color] - (running ? Math.max(0, at - arcade.at) : 0));
-  }
-  function flagArcade() {
-    if (!arcade || localOutcome || arcadeRemaining(local.turn()) > 0) return false;
-    arcade[local.turn()] = 0;
-    finishLocal(`${colorName(otherColor(local.turn()))} wins on time`);
-    return true;
+  function miniPending(game) {
+    return game?.variant === "minigame" && !!game.miniChallenge && !game.miniMove;
   }
   function closeMinigame() {
     stopMinigame?.();
     stopMinigame = null;
+    minigameKey = null;
     if (minigameDialog.open) minigameDialog.close();
   }
-  function localLegalMoves(chess, variant) {
-    const moves = legalMoves(chess, variant);
-    if (mode !== "local" || !arcade?.forced || chess.isCheck()) return moves;
-    return moves.filter((move) => encodeMove(move) === arcade.forced);
+  function matchLegalMoves(chess, game) {
+    const moves = legalMoves(chess, game?.variant);
+    return game?.variant === "minigame" && game.miniMove && game.miniMove !== "-"
+      ? moves.filter((move) => encodeMove(move) === game.miniMove) : moves;
   }
-  function advanceArcade(move) {
-    const at = Date.now();
-    arcade[move.color] = arcadeRemaining(move.color, at) + 2000;
-    arcade.at = at;
-    arcade.forced = null;
-    arcade.message = "";
-  }
-  function scheduleMinigame() {
-    if (!arcade || --arcade.next > 0) return;
-    arcade.next = nextArcadeInterval(local.turn());
-    if (local.isCheck()) {
-      arcade.message = "Challenge skipped while the king is in check.";
-      return;
+  function nextMinigame(game, move) {
+    const ply = (game.moves.length - 1) / 5 + 1;
+    if (ply < game.miniNext) return { miniNext: game.miniNext };
+    const next = { miniNext: ply + arcadeRandom(3, 5) };
+    const chess = replay(game.moves + encodeMove(move), game);
+    if (!chess.isGameOver() && !chess.isCheck()) {
+      const kind = arcadePick(Object.keys(minigames));
+      next.miniChallenge = JSON.stringify({ kind, goal: minigames[kind].goal() });
     }
-    const kind = arcadePick(Object.keys(minigames));
-    arcade.pending = { kind, goal: minigames[kind].goal() };
+    return next;
   }
-  function resolveMinigame(won) {
-    if (!arcade?.pending) return;
-    const name = minigames[arcade.pending.kind].name;
-    closeMinigame();
-    arcade.pending = null;
-    arcade.at = Date.now();
-    const forced = won || local.isCheck() ? null : arcadePick(legalMoves(local));
-    arcade.forced = forced ? encodeMove(forced) : null;
-    arcade.message = won ? `${name} cleared. Choose any legal move.` : forced
-      ? `${name} missed. ${colorName(local.turn())} must play ${forced.san} (${forced.from} → ${forced.to}${forced.promotion ? `, promote to ${pieceNames[forced.promotion]}` : ""}).`
-      : `${name} missed. Play any legal check escape.`;
-    rememberLocal();
-    renderGame();
+  function minigameNote(game, chess) {
+    if (miniPending(game)) return `${playerName(game, game.turn)} is playing a minigame. Chess clocks are paused.`;
+    if (game.miniMove === "-") return `${playerName(game, game.turn)} won the minigame and can choose any legal move.`;
+    const forced = game.miniMove && matchLegalMoves(chess, game)[0];
+    if (!forced) return variantNotes.minigame;
+    const player = game.turn === myColor(game) ? "You" : playerName(game, game.turn);
+    return `${player} must play ${forced.san} (${forced.from} → ${forced.to}${forced.promotion ? `, promote to ${pieceNames[forced.promotion]}` : ""}) after losing the minigame.`;
+  }
+  async function resolveMinigame(won) {
+    const game = currentGame(), key = gameId;
+    if (!miniPending(game) || game.turn !== myColor(game) || moving || !isPlaying(game, onlinePosition)) return;
+    stopMinigame?.();
+    stopMinigame = null;
+    if (miniResult?.key !== minigameKey) {
+      miniResult = { key: minigameKey, move: won ? "-" : encodeMove(arcadePick(legalMoves(onlinePosition))) };
+    }
+    const result = miniResult;
+    moving = true;
+    $("minigame-start").hidden = true;
+    $("minigame-forfeit").disabled = true;
+    $("minigame-progress").textContent = "Saving result…";
+    try {
+      await onlineApi.resolveChallenge(key, game, result.move);
+      if (miniResult === result) miniResult = null;
+    } catch (error) {
+      if (gameId === key && minigameKey) {
+        $("minigame-progress").textContent = messageFor(error);
+        $("minigame-forfeit").textContent = "Retry saving result";
+      }
+    } finally {
+      moving = false;
+      $("minigame-forfeit").disabled = false;
+      renderGame();
+    }
   }
   function presentMinigame() {
-    if (mode !== "local" || page !== "play" || royaleOpen || !arcade?.pending || localOutcome || minigameDialog.open) return;
-    const { kind, goal } = arcade.pending;
-    const game = minigames[kind];
-    $("minigame-turn").textContent = `${colorName(local.turn())}’s challenge · Chess clocks paused`;
-    $("minigame-title").textContent = game.name;
-    $("minigame-goal").textContent = game.describe(goal);
+    const game = currentGame();
+    const key = page === "play" && miniPending(game) && isPlaying(game, onlinePosition) &&
+      game.turn === myColor(game) ? `${gameId}:${game.moves}` : null;
+    if (minigameKey === key) return;
+    closeMinigame();
+    if (!key) return;
+    let challenge;
+    try { challenge = JSON.parse(game.miniChallenge); } catch { return; }
+    const { kind, goal } = challenge ?? {};
+    const mini = minigames[kind];
+    if (!mini) return;
+    minigameKey = key;
+    $("minigame-turn").textContent = "Your challenge · Chess clocks paused";
+    $("minigame-title").textContent = mini.name;
+    $("minigame-goal").textContent = mini.describe(goal);
     $("minigame-progress").textContent = "";
     $("minigame-area").replaceChildren();
-    $("minigame-start").hidden = false;
+    const retry = miniResult?.key === key;
+    $("minigame-start").hidden = retry;
+    $("minigame-forfeit").textContent = retry ? "Retry saving result" : "Forfeit challenge";
     minigameDialog.showModal();
   }
   minigameDialog.addEventListener("cancel", (event) => event.preventDefault());
   $("minigame-start").addEventListener("click", () => {
-    if (!arcade?.pending || stopMinigame) return;
-    const { kind, goal } = arcade.pending;
+    if (!minigameKey || stopMinigame || moving) return;
+    const { kind, goal } = JSON.parse(currentGame().miniChallenge);
     $("minigame-start").hidden = true;
     stopMinigame = playMinigame(minigames[kind], goal);
   });
   $("minigame-forfeit").addEventListener("click", () => resolveMinigame(false));
-
-  function startLocalChess(variant = localVariant) {
-    if (local.history().length && !localOutcome && !local.isGameOver() && !confirm("Start a new local game?")) return false;
-    closeMinigame();
-    local.reset();
-    localOutcome = "";
-    localDraw = false;
-    localStartedAt = undefined;
-    selected = null;
-    localVariant = variant;
-    arcade = variant === "minigame" ? createArcade() : null;
-    rememberLocal();
-    renderGame();
-    return true;
-  }
-  function renderLocalOptions() {
-    const isLocal = mode === "local";
-    $("local-options").hidden = !isLocal;
-    $("local-variant").value = royaleOpen ? "royale" : localVariant;
-    $("chess-layout").hidden = isLocal && royaleOpen;
-    $("royale-room").hidden = !isLocal || !royaleOpen;
-    if (isLocal && royaleOpen) renderRoyale();
-  }
-  $("local-variant").addEventListener("change", (event) => {
-    const variant = event.target.value;
-    royaleOpen = variant === "royale";
-    if (!royaleOpen && variant !== localVariant) startLocalChess(variant);
-    renderGame();
-  });
-
-  function showGuest() {
-    guest = true;
-    restoreLocal();
-    localHistory = savedLocalHistory();
-    $("auth-screen").hidden = true;
-    $("game-screen").hidden = false;
-    $("menu-toggle").hidden = true;
-    $("online-tab").hidden = true;
-    $("account-avatar").hidden = true;
-    $("account-rating").hidden = true;
-    $("account-name").textContent = "Guest";
-    $("account-button").textContent = "Sign in";
-    goTo("play");
-    changeMode("local");
-  }
-  $("guest-play").addEventListener("click", showGuest);
-  function leaveGuest() {
-    guest = false;
-    closeMinigame();
-    arcade = null;
-    localVariant = "classic";
-    resetRoyale();
-    $("menu-toggle").hidden = false;
-    $("online-tab").hidden = false;
-    $("account-avatar").hidden = false;
-    $("account-rating").hidden = false;
-    $("account-button").textContent = "Sign out";
-    $("game-screen").hidden = true;
-    $("auth-screen").hidden = false;
-    $("username").focus();
-  }
+  $("minigame-back").addEventListener("click", openLobby);
 
   const miniArea = $("minigame-area");
   const miniProgress = $("minigame-progress");
@@ -18683,7 +18630,10 @@ FIREBASE: `));
     side: { icon: "♜", hp: 3052, damage: 136, period: 1, range: 5, radius: .85 },
     king: { icon: "♚", hp: 4500, damage: 150, period: 1, range: 5, radius: 1 }
   };
-  let battle = null, royaleFrame = 0, lastRoyaleFrame = null, accumulator = 0;
+  const royaleStep = 1000 / 60, royaleDuration = 300000, royaleCountdown = 3000, royaleBuffer = 250;
+  const royaleMatches = new Map();
+  let battle = null, royaleFrame = 0, royaleView = null, deploying = null;
+  let deploymentMessage = "";
   let activeCard = null, cursor = null;
   const royaleUI = {};
 
@@ -18732,28 +18682,32 @@ FIREBASE: `));
   function royaleStatus(message) {
     if ($("royale-status").textContent !== message) $("royale-status").textContent = message;
   }
-  function updateRoyaleUI() {
-    const cpu = (battle?.opponent ?? $("royale-opponent").value) === "cpu";
+  function updateRoyaleUI(game, reviewing) {
+    const ready = clockReady && now() >= royaleStart(game);
     for (const side of ["w", "b"]) {
-      const ui = royaleUI[side];
-      const isCpu = cpu && side === "b";
+      const ui = royaleUI[side], own = !reviewing && side === myColor(game);
       const elixir = battle?.elixir[side] ?? 5;
-      ui.name.textContent = side === "w" ? "White · Blue" : isCpu ? "Black · Computer" : "Black · Red";
+      ui.name.textContent = `${playerName(game, side)} · ${side === "w" ? "Blue" : "Red"}${own ? " · You" : ""}`;
       ui.elixir.textContent = `${elixir} / 10 elixir`;
       ui.bar.value = elixir;
-      ui.hand.hidden = isCpu;
+      ui.hand.hidden = !own;
       for (const [key, button] of Object.entries(ui.buttons)) {
-        button.disabled = !battle || !!battle.result || isCpu || elixir < royaleCards[key].cost;
+        button.disabled = !ready || !own || !!deploying || !battle || !!battle.result || elixir < royaleCards[key].cost;
         button.setAttribute("aria-pressed", String(activeCard?.side === side && activeCard.key === key));
       }
     }
-    $("royale-start").textContent = battle && !battle.result ? "Restart battle" : "Start battle";
+    $("royale-clock").textContent = showTime(Math.max(0, royaleDuration - (battle?.time ?? 0) * 1000));
+    $("royale-back").textContent = reviewing ? "Back to history" : "Back to lobby";
+    const countdown = Math.ceil((royaleStart(game) - now()) / 1000);
+    royaleStatus(battle?.result || (!clockReady ? "Synchronizing battle clock…" :
+      countdown > 0 ? `Battle starts in ${countdown}s.` :
+      deploymentMessage || "Select a card, then choose a tile to deploy it."));
   }
-  function createRoyaleBattle(opponent) {
-    const state = { time: 0, elixir: { w: 5, b: 5 }, nextElixir: 2.8, nextAI: 1.6, entities: [], effects: [], result: "", opponent };
+  function createRoyaleBattle() {
+    const state = { time: 0, tick: 0, applied: 0, elixir: { w: 5, b: 5 }, nextElixir: 2.8, entities: [], effects: [], result: "" };
     for (const side of ["w", "b"]) {
-      spawnRoyale(state, "king", side, 16, side === "w" ? 16.6 : 1.4);
-      for (const x of [7.5, 24.5]) spawnRoyale(state, "side", side, x, side === "w" ? 14.8 : 3.2);
+      spawnRoyale(state, "king", side, 16, side === "w" ? 16.75 : 1.25);
+      for (const x of [7.5, 24.5]) spawnRoyale(state, "side", side, x, side === "w" ? 16.75 : 1.25);
     }
     return state;
   }
@@ -18770,34 +18724,19 @@ FIREBASE: `));
     battle = null;
     activeCard = null;
     cursor = null;
-    royaleOpen = false;
-    lastRoyaleFrame = null;
-    accumulator = 0;
+    royaleView = null;
+    deploying = null;
+    deploymentMessage = "";
     cancelAnimationFrame(royaleFrame);
     royaleFrame = 0;
-    royaleStatus("Start a battle, select a card, and choose a tile.");
   }
-  $("royale-start").addEventListener("click", () => {
-    if (battle && !battle.result && !confirm("Restart this battle?")) return;
-    battle = createRoyaleBattle($("royale-opponent").value);
-    activeCard = null;
-    cursor = null;
-    accumulator = 0;
-    royaleStatus("Select a card, then choose a tile to deploy it.");
-    renderRoyale();
-  });
-  $("royale-opponent").addEventListener("change", () => {
-    if (battle && battle.opponent !== $("royale-opponent").value) {
-      royaleStatus("Start a new battle to switch opponents.");
-    }
-    updateRoyaleUI();
-  });
+  $("royale-back").addEventListener("click", () => mode === "review" ? goTo("history") : openLobby());
 
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const arenaDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const crownTower = (unit) => unit.type === "side" || unit.type === "king";
   function canDeploy(state, side, key, x, y) {
-    if (!state || state.result || state.elixir[side] < royaleCards[key].cost ||
+    if (!state || state.result || !royaleCards[key] || state.elixir[side] < royaleCards[key].cost ||
         x < 0 || x >= arenaWidth || y < 0 || y >= arenaHeight) return false;
     if (key === "rocket") return true;
     if ((y >= arenaHeight / 2) !== (side === "w")) return false;
@@ -18823,20 +18762,35 @@ FIREBASE: `));
     }
     return true;
   }
-  function placeSelected() {
+  async function placeSelected() {
+    const game = currentGame();
+    if (!isRoyale(game) || !clockReady || now() < royaleStart(game) || deploying) return;
     if (!activeCard || !cursor) {
-      royaleStatus("Select a card first.");
+      deploymentMessage = "Select a card first.";
+      renderRoyale();
       return;
     }
-    const { key, side } = activeCard;
-    if (!deployRoyale(battle, side, key, cursor.x, cursor.y)) {
-      royaleStatus(key === "rocket" ? "That card is unavailable." : "Choose a clear tile on your own half.");
+    const { key, side } = activeCard, { x, y } = cursor;
+    if (side !== myColor(game) || !canDeploy(battle, side, key, x, y)) {
+      deploymentMessage = key === "rocket" ? "That card is unavailable." : "Choose a clear tile on your own half.";
+      renderRoyale();
       return;
     }
+    const request = deploying = {};
     activeCard = null;
-    royaleStatus(`${colorName(side)} deployed ${royaleCards[key].name}.`);
-    updateRoyaleUI();
-    drawRoyale();
+    deploymentMessage = "Deploying…";
+    renderRoyale();
+    try {
+      await onlineApi.sendRoyaleCommand(gameId, side, key, x, y);
+      if (deploying === request) deploymentMessage = `Deployed ${royaleCards[key].name}.`;
+    } catch (error) {
+      if (deploying === request) deploymentMessage = messageFor(error);
+    } finally {
+      if (deploying === request) {
+        deploying = null;
+        renderRoyale();
+      }
+    }
   }
   function pointerTile(event) {
     const bounds = royaleCanvas.getBoundingClientRect();
@@ -18962,30 +18916,12 @@ FIREBASE: `));
     }
   }
 
-  function computerRoyaleTurn(state) {
-    const enemies = state.entities.filter((unit) => unit.side === "w" && unit.hp > 0 && unit.stats.speed);
-    const threats = enemies.filter((unit) => unit.y < 10);
-    const threat = nearest({ x: 16, y: 3 }, threats);
-    const eligible = Object.keys(royaleCards).filter((key) => royaleCards[key].cost <= state.elixir.b);
-    if (!eligible.length) return;
-    const heavy = enemies.find((unit) => unit.hp >= 650 && unit.y < 12);
-    const key = heavy && eligible.includes("rocket") && Math.random() < .35 ? "rocket"
-      : arcadePick(eligible.filter((key) => key !== "rocket" && (key !== "roller" || threat)));
-    const x = threat ? clamp(Math.floor(threat.x) + .5, .5, 31.5) : arcadePick([7.5, 24.5]);
-    if (key === "rocket") deployRoyale(state, "b", key, heavy.x, heavy.y);
-    else deployRoyale(state, "b", key, x, key === "tower" ? 5.5 : key === "roller" ? 2.5 : 7.5);
-  }
-  function stepRoyale(state, dt) {
-    state.time += dt;
+  function stepRoyale(state) {
+    state.time = ++state.tick / 60;
+    const dt = 1 / 60;
     if (state.time + 1e-8 >= state.nextElixir) {
       state.nextElixir += 2.8;
       for (const side of ["w", "b"]) state.elixir[side] = Math.min(10, state.elixir[side] + 1);
-      updateRoyaleUI();
-    }
-    if (state.opponent === "cpu" && state.time >= state.nextAI) {
-      state.nextAI = state.time + arcadeRandom(19, 34) / 10;
-      computerRoyaleTurn(state);
-      updateRoyaleUI();
     }
     state.entities = state.entities.filter((unit) => unit.hp > 0 && unit.expires > state.time);
     advanceRoyaleEffects(state);
@@ -18995,10 +18931,11 @@ FIREBASE: `));
     const whiteKing = white.some((unit) => unit.type === "king" && unit.hp > 0);
     const blackKing = black.some((unit) => unit.type === "king" && unit.hp > 0);
     if (!whiteKing || !blackKing) {
+      state.outcome = whiteKing ? "w" : blackKing ? "b" : "draw";
       state.result = whiteKing ? "White wins · Black king tower destroyed" : blackKing ? "Black wins · White king tower destroyed" : "Draw · Both king towers destroyed";
-      activeCard = null;
-      royaleStatus(state.result);
-      updateRoyaleUI();
+    } else if (state.tick >= Math.round(royaleDuration / royaleStep)) {
+      state.outcome = "draw";
+      state.result = "Draw · Both king towers survived";
     }
   }
   function royaleCircle(x, y, radius, color) {
@@ -19121,32 +19058,67 @@ FIREBASE: `));
       ctx.fillText(battle.result, width / 2, height / 2 + 8);
     }
   }
-  function royaleVisible() {
-    return mode === "local" && royaleOpen && page === "play" && !$("game-screen").hidden;
+  function isRoyale(game) {
+    return game?.variant === "royale" && game.state === "active";
   }
-  function royaleLoop(timestamp) {
-    royaleFrame = 0;
-    if (!royaleVisible() || !battle || battle.result) {
-      lastRoyaleFrame = null;
-      return;
+  function royaleStart(game) {
+    return game.startedAt + royaleCountdown;
+  }
+  function royaleState(game) {
+    const start = royaleStart(game);
+    const match = `${game.from}:${game.to}:${start}`;
+    let entry = royaleMatches.get(match);
+    if (!entry) {
+      if (royaleMatches.size >= 40) royaleMatches.delete(royaleMatches.keys().next().value);
+      entry = { state: createRoyaleBattle(), commands: [] };
+      royaleMatches.set(match, entry);
     }
-    if (lastRoyaleFrame !== null) accumulator += Math.min(.12, (timestamp - lastRoyaleFrame) / 1000);
-    lastRoyaleFrame = timestamp;
-    const dt = 1 / 60;
-    while (accumulator >= dt && !battle.result) {
-      stepRoyale(battle, dt);
-      accumulator -= dt;
+    if (entry.source !== game.royaleCommands) {
+      const commands = Object.entries(game.royaleCommands ?? {}).map(([id, command]) => ({
+        ...command, id, tick: Math.floor((command.at - start) / royaleStep)
+      })).filter((command) => command.tick >= 0 && command.tick < royaleDuration / royaleStep)
+        .sort((a, b) => a.at - b.at || (a.id < b.id ? -1 : 1));
+      const previous = entry.commands;
+      let changed = 0;
+      while (changed < previous.length && changed < commands.length &&
+        previous[changed].id === commands[changed].id && previous[changed].at === commands[changed].at) changed++;
+      if ((previous[changed]?.tick ?? Infinity) < entry.state.tick ||
+          (commands[changed]?.tick ?? Infinity) < entry.state.tick) entry.state = createRoyaleBattle();
+      entry.commands = commands;
+      entry.source = game.royaleCommands;
     }
-    drawRoyale();
-    if (!battle.result) royaleFrame = requestAnimationFrame(royaleLoop);
-    else lastRoyaleFrame = null;
+    const { state, commands } = entry;
+    const elapsed = clockReady ? now() - start - royaleBuffer : 0;
+    const target = Math.min(Math.round(royaleDuration / royaleStep), Math.floor(elapsed / royaleStep));
+    while (state.tick < target && !state.result) {
+      while (commands[state.applied]?.tick === state.tick) {
+        const { side, card, x, y } = commands[state.applied++];
+        deployRoyale(state, side, card, x, y);
+      }
+      stepRoyale(state);
+    }
+    return state;
   }
   function renderRoyale() {
-    updateRoyaleUI();
+    const reviewing = mode === "review";
+    const game = reviewing ? review.record.game : currentGame();
+    if (page !== "play" || !isRoyale(game)) return;
+    const view = reviewing ? `review:${review.record.id}` : gameId;
+    if (view !== royaleView) {
+      resetRoyale();
+      royaleView = view;
+    }
+    battle = royaleState(game);
+    if (battle.result) activeCard = null;
+    updateRoyaleUI(game, reviewing);
     drawRoyale();
-    if (!royaleFrame && battle && !battle.result) royaleFrame = requestAnimationFrame(royaleLoop);
+    if (!reviewing && !royaleFrame && !battle.result) {
+      royaleFrame = requestAnimationFrame(() => {
+        royaleFrame = 0;
+        renderRoyale();
+      });
+    }
   }
-  document.addEventListener("visibilitychange", () => { lastRoyaleFrame = null; });
   buildRoyaleUI();
 
   function goTo(next, keepReview = !1) {
@@ -19156,7 +19128,8 @@ FIREBASE: `));
       $(`page-${button.dataset.page}`).hidden = !current, current ? button.setAttribute("aria-current", "page") : button.removeAttribute("aria-current");
     }
     setMenu(!1), page === "history" && renderHistory();
-    if (page === "play" && mode === "local") renderGame();
+    if (page === "play") renderGame();
+    else { closeMinigame(); resetRoyale(); }
   }
   function setMenu(open) {
     $("site-menu").hidden = !open, $("menu-toggle").setAttribute("aria-expanded", String(open)), $("menu-toggle").setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
@@ -19183,30 +19156,6 @@ FIREBASE: `));
       } catch {
         location.hash = fragment;
       }
-  }
-  function rememberLocal() {
-    try {
-      let moves = "-" + local.history({ verbose: !0 }).map(encodeMove).join("");
-      localStorage.setItem(`VChess:local:${account?.uid ?? "guest"}`, JSON.stringify({ moves, date: localStartedAt, outcome: localOutcome, draw: localDraw, variant: localVariant, arcade }));
-    } catch {
-    }
-  }
-  function restoreLocal() {
-    local = new Chess(), localOutcome = "", localStartedAt = void 0, localDraw = !1, arcade = null, localVariant = "classic";
-    try {
-      let saved = JSON.parse(localStorage.getItem(`VChess:local:${account?.uid ?? "guest"}`) ?? "null");
-      if (!saved) return;
-      local = replay(saved.moves), localStartedAt = saved.date, localOutcome = saved.outcome ?? "", localDraw = !!saved.draw;
-      if (saved.variant === "minigame" && saved.arcade) {
-        localVariant = "minigame";
-        arcade = saved.arcade;
-      }
-    } catch {
-    }
-  }
-  function finishLocal(result) {
-    let date = localStartedAt ?? Date.now(), moves = "-" + local.history({ verbose: !0 }).map(encodeMove).join("");
-    localOutcome = result, localDraw = !1, localHistory.unshift({ id: `local-${Date.now()}`, title: arcade ? "Random Minigame Chess" : "Local game", control: arcade ? "5+2" : "Untimed", date, moves, result }), persistLocalHistory(), rememberLocal(), renderGame();
   }
   function resumeMatch() {
     let id = /^#game=([-_A-Za-z0-9]{1,80})$/.exec(location.hash)?.[1];
@@ -19262,6 +19211,7 @@ FIREBASE: `));
     return positions.get(key);
   }
   function gameOutcome(game, chess) {
+    if (isRoyale(game)) return royaleState(game).outcome ?? null;
     if (chess) {
       let captured = diddyCapture(chess, game.variant);
       if (captured) return captured;
@@ -19271,6 +19221,7 @@ FIREBASE: `));
     return chess && variantEnd(chess, game.variant) || game.draw === "agreed" ? "draw" : game.resigned !== "-" ? game.resigned === game.white ? "b" : "w" : game.flagged === "w" || game.flagged === "b" ? game.flagged === "w" ? "b" : "w" : null;
   }
   function resultFor(game, chess) {
+    if (isRoyale(game)) return royaleState(game).result || null;
     if (chess && variantEnd(chess, game.variant)) {
       let captured = diddyCapture(chess, game.variant);
       if (captured) return `${playerName(game, captured)} wins \xB7 Diddy captured by the king`;
@@ -19287,20 +19238,9 @@ FIREBASE: `));
     return `${playerName(game, outcome)} wins ${reason}`;
   }
   function isPlaying(game, chess) {
-    return game?.state === "active" && !inSetup(game) && !!chess && !resultFor(game, chess);
+    return game?.state === "active" && game.variant !== "royale" && !inSetup(game) && !!chess && !resultFor(game, chess);
   }
   function tickClocks() {
-    if (mode === "local" && arcade) {
-      if (flagArcade()) return;
-      const running = !localOutcome && !arcade.pending;
-      for (const clock of $("page-play").querySelectorAll("[data-clock]")) {
-        const color = clock.dataset.clock, ms = arcadeRemaining(color), display = showTime(ms);
-        if (clock.textContent !== display) clock.textContent = display;
-        clock.classList.toggle("running", running && local.turn() === color);
-        clock.classList.toggle("low", running && local.turn() === color && ms <= 10000);
-      }
-      return;
-    }
     let game = currentGame();
     if (inSetup(game)) {
       renderSetupStatus(game);
@@ -19310,7 +19250,7 @@ FIREBASE: `));
     let running = isPlaying(game, onlinePosition), at = now();
     for (let clock of $("page-play").querySelectorAll("[data-clock]")) {
       let color = clock.dataset.clock, ms = game.flagged === color ? 0 : remaining(game, color, at, running), display = showTime(ms);
-      clock.textContent !== display && (clock.textContent = display), clock.classList.toggle("running", running && game.turn === color), clock.classList.toggle("low", running && game.turn === color && ms <= 1e4);
+      clock.textContent !== display && (clock.textContent = display), clock.classList.toggle("running", running && !miniPending(game) && game.turn === color), clock.classList.toggle("low", running && !miniPending(game) && game.turn === color && ms <= 1e4);
     }
   }
   function settleExpiredGames() {
@@ -19322,7 +19262,7 @@ FIREBASE: `));
         }).finally(() => setTimeout(() => setupAttempts.delete(key), 1e3)));
         continue;
       }
-      !game.control || game.state !== "active" || game.flagged !== "-" || game.resigned !== "-" || game.draw === "agreed" || flagAttempts.has(key) || remaining(game, game.turn, at) > 0 || !isPlaying(game, cachedPosition(game.moves, game)) || (flagAttempts.add(key), onlineApi.saveGame(key, { ...game, flagged: game.turn }).catch(() => {
+      game.variant === "royale" || miniPending(game) || !game.control || game.state !== "active" || game.flagged !== "-" || game.resigned !== "-" || game.draw === "agreed" || flagAttempts.has(key) || remaining(game, game.turn, at) > 0 || !isPlaying(game, cachedPosition(game.moves, game)) || (flagAttempts.add(key), onlineApi.saveGame(key, { ...game, flagged: game.turn }).catch(() => {
       }).finally(() => setTimeout(() => flagAttempts.delete(key), 1e3)));
     }
   }
@@ -19334,9 +19274,9 @@ FIREBASE: `));
       return [];
     }
   }
-  function persistLocalHistory() {
+  function persistLocalHistory(records) {
     try {
-      localStorage.setItem(`VChess:history:${account?.uid ?? "guest"}`, JSON.stringify(localHistory));
+      localStorage.setItem(`VChess:history:${account?.uid ?? "guest"}`, JSON.stringify(records));
     } catch {
     }
   }
@@ -19349,7 +19289,7 @@ FIREBASE: `));
   }
   function renderHistory() {
     if (!account) return;
-    let records = [...localHistory];
+    let records = savedLocalHistory().slice();
     for (let [id, game] of Object.entries(games())) {
       if (hiddenGames[id] || game.state !== "active") continue;
       let result = resultFor(game, cachedPosition(game.moves, game));
@@ -19360,7 +19300,7 @@ FIREBASE: `));
         result,
         date: game.startedAt || oldGameDate(id),
         title: `vs. ${other(game).name}`,
-        control: [game.variant ? variantNames[game.variant] : "", game.control ?? "Untimed"].filter(Boolean).join(" \xB7 ")
+        control: [game.variant ? variantNames[game.variant] : "", isRoyale(game) ? "5-minute battle" : game.control ?? "Untimed"].filter(Boolean).join(" \xB7 ")
       });
     }
     records.sort((a, b) => b.date - a.date);
@@ -19370,9 +19310,9 @@ FIREBASE: `));
       let row = node2("div", "history-row"), info = node2("div", "history-info");
       info.append(node2("strong", "", record.title), node2("span", "", `${dateLabel(record.date)} \xB7 ${record.control} \xB7 ${record.result}`)), row.append(
         info,
-        actionButton("Review", () => openReview(record), !0),
+        actionButton(isRoyale(record.game) ? "View battle" : "Review", () => openReview(record), !0),
         actionButton("Delete", async () => {
-          confirm("Delete this game from your history?") && (record.game ? await onlineApi.hideGame(account.uid, record.id) : (localHistory = localHistory.filter((item) => item.id !== record.id), persistLocalHistory(), renderHistory()));
+          confirm("Delete this game from your history?") && (record.game ? await onlineApi.hideGame(account.uid, record.id) : (persistLocalHistory(savedLocalHistory().filter((item) => item.id !== record.id)), renderHistory()));
         })
       ), list.append(row);
     }
@@ -19383,7 +19323,7 @@ FIREBASE: `));
     review.ply = Math.max(0, Math.min(end, ply)), review.position = cachedPosition(review.record.moves.slice(0, 1 + review.ply * 5), review.record.game) ?? empty, $("review-prev").disabled = review.ply === 0, $("review-next").disabled = review.ply === end, renderGame();
   }
   function openReview(record) {
-    review = { record, ply: 0, position: empty }, mode === "local" && (localOrientation = orientation), mode = "review", selected = null, orientation = record.game ? myColor(record.game) : "w", goTo("play", !0), setReviewPly(0);
+    review = { record, ply: 0, position: empty }, mode = "review", selected = null, orientation = record.game ? myColor(record.game) : "w", goTo("play", !0), setReviewPly(0);
   }
   $("back-history").addEventListener("click", () => goTo("history"));
   $("review-prev").addEventListener("click", () => setReviewPly(review.ply - 1));
@@ -19399,7 +19339,14 @@ FIREBASE: `));
     mode === "review" && target && setReviewPly(Number(target.dataset.ply));
   });
   setInterval(tickClocks, 200);
-  setInterval(settleExpiredGames, 1e3);
+  setInterval(() => {
+    settleExpiredGames();
+    if (!account || !clockReady) return;
+    if (Object.values(games()).some((game) => isRoyale(game) && royaleState(game).result && !shownRoyaleResults.has(game.startedAt + ":" + game.from + ":" + game.to))) {
+      renderClub();
+      if (page === "history") renderHistory();
+    }
+  }, 1000);
   function notify(message) {
     let box = $("notice");
     box.textContent = message, box.hidden = !message, clearTimeout(noticeTimer), message && (noticeTimer = setTimeout(() => {
@@ -19443,7 +19390,7 @@ FIREBASE: `));
     return mode === "online" && gameId ? games()[gameId] : null;
   }
   function position() {
-    return mode === "local" ? local : mode === "review" ? review.position : onlinePosition ?? empty;
+    return mode === "review" ? review.position : onlinePosition ?? empty;
   }
   function other(record) {
     return record.from === account.uid ? { uid: record.to, name: record.toName } : { uid: record.from, name: record.fromName };
@@ -19456,17 +19403,18 @@ FIREBASE: `));
   }
   function canMove() {
     let game = currentGame();
-    return position().isGameOver() || mode === "local" && (localOutcome || arcade?.pending || royaleOpen || arcade && arcadeRemaining(local.turn()) <= 0) ? !1 : mode === "local" || !!(isPlaying(game, onlinePosition) && !moving && onlinePosition.turn() === myColor(game) && (!game.control || remaining(game, game.turn, now()) > 0));
+    return !!(isPlaying(game, onlinePosition) && !moving && !miniPending(game) &&
+      onlinePosition.turn() === myColor(game) && (!game.control || remaining(game, game.turn, now()) > 0));
   }
   function playerRow(element, color, game) {
     let ownPlayer = game && color === myColor(game), icon = node2("span", "player-icon", ownPlayer ? avatarFor(profile) : color === "w" ? "\u2654" : "\u265A");
     icon.setAttribute("aria-hidden", "true");
     let name5 = node2("span", "", ownPlayer && profile.name ? profile.name : playerName(game, color));
-    if (ownPlayer && name5.append(node2("span", "rating", String(rating))), game && name5.append(node2("span", "color-label", color === "w" ? "White" : "Black")), element.replaceChildren(icon, name5), (mode === "local" && arcade || game?.control && !inSetup(game) && mode === "online")) {
+    if (ownPlayer && name5.append(node2("span", "rating", String(rating))), game && name5.append(node2("span", "color-label", color === "w" ? "White" : "Black")), element.replaceChildren(icon, name5), (game?.control && !inSetup(game) && mode === "online")) {
       let clock = node2("span", "clock");
       clock.dataset.clock = color, clock.setAttribute("aria-label", color === "w" ? "White clock" : "Black clock"), element.append(clock);
     }
-    (mode === "local" && !localOutcome || mode === "online" && isPlaying(game, onlinePosition)) && position().turn() === color && !position().isGameOver() && element.append(node2("span", "turn-tag", "To move"));
+    (mode === "online" && isPlaying(game, onlinePosition)) && position().turn() === color && !position().isGameOver() && element.append(node2("span", "turn-tag", "To move"));
   }
   function setupLayout(game) {
     return game[myColor(game) === "w" ? "whiteSetup" : "blackSetup"] ?? fogDrafts.get(gameId) ?? defaultSetup;
@@ -19509,7 +19457,7 @@ FIREBASE: `));
     lockingSetup = !0, selected = null, renderBoard(), await perform(() => onlineApi.submitSetup(key, myColor(game), setupLayout(game))), lockingSetup = !1, gameId === key && renderGame();
   });
   function renderBoard() {
-    let chess = position(), game = mode === "review" ? review.record.game : currentGame(), setup = inSetup(game), fog = game?.variant === "fog", color = game ? myColor(game) : null, layout = setup ? setupLayout(game) : null, board = $("board"), focusedSquare = board.contains(document.activeElement) ? document.activeElement.dataset.square : null, last = chess.history({ verbose: !0 }).at(-1), legal = selected && canMove() ? localLegalMoves(chess, game?.variant).filter((move) => move.from === selected) : [], displayFiles = orientation === "w" ? files : [...files].reverse().join(""), ranks = orientation === "w" ? "87654321" : "12345678", grid = document.createDocumentFragment();
+    let chess = position(), game = mode === "review" ? review.record.game : currentGame(), setup = inSetup(game), fog = game?.variant === "fog", color = game ? myColor(game) : null, layout = setup ? setupLayout(game) : null, board = $("board"), focusedSquare = board.contains(document.activeElement) ? document.activeElement.dataset.square : null, last = chess.history({ verbose: !0 }).at(-1), legal = selected && canMove() ? matchLegalMoves(chess, game).filter((move) => move.from === selected) : [], displayFiles = orientation === "w" ? files : [...files].reverse().join(""), ranks = orientation === "w" ? "87654321" : "12345678", grid = document.createDocumentFragment();
     for (let [row, rank2] of [...ranks].entries())
       for (let [column, file2] of [...displayFiles].entries()) {
         let square = file2 + rank2, setupType = setup ? layout[setupIndex(square, color)] : null, piece = setup ? setupType && { type: setupType, color } : chess.get(square), concealed = !!(piece && fog && piece.color !== color), diddy = piece?.type === "q" && game?.variant === "predator", pieceName = concealed ? "hidden piece" : diddy ? "Diddy" : pieceNames[piece?.type], cell = node2("button", `square${(row + column) % 2 ? " dark" : ""}`);
@@ -19523,23 +19471,40 @@ FIREBASE: `));
   }
   function renderGame() {
     let game = currentGame(), chess = position();
-    renderLocalOptions();
-    $("local-tab").classList.toggle("active", mode === "local"), $("online-tab").classList.toggle("active", mode === "online"), $("local-tab").setAttribute("aria-pressed", String(mode === "local")), $("online-tab").setAttribute("aria-pressed", String(mode === "online")), $("play-tabs").hidden = mode === "review", $("active-panel").hidden = mode !== "online", $("review-actions").hidden = mode !== "review", $("game-mode").textContent = mode === "review" ? "GAME REVIEW" : mode === "local" ? arcade ? "RANDOM MINIGAME CHESS · 5+2" : "LOCAL GAME" : game ? `${variantNames[game.variant] ?? "ONLINE GAME"} \xB7 ${game.control ?? "UNTIMED"}` : "ONLINE LOBBY";
-    let status = mode === "local" && localOutcome ? localOutcome : describe(chess);
+    const shownGame = mode === "review" ? review.record.game : game;
+    const royale = isRoyale(shownGame);
+    $("chess-layout").hidden = royale;
+    $("royale-room").hidden = !royale;
+    if (royale) {
+      closeMinigame();
+      renderRoyale();
+      return;
+    }
+    if (royaleView) resetRoyale();
+    $("active-panel").hidden = mode !== "online";
+    $("review-actions").hidden = mode !== "review";
+    $("game-mode").textContent = mode === "review" ? "GAME REVIEW" : game ? `${variantNames[game.variant] ?? "ONLINE GAME"} · ${game.control ?? "UNTIMED"}` : "ONLINE LOBBY";
+    let status = describe(chess);
     if (mode === "review") {
       let end = (review.record.moves.length - 1) / 5;
       status = `${review.record.result} \xB7 Move ${review.ply} of ${end}`;
-    } else mode === "online" && (game ? inSetup(game) ? status = "Fog Chess setup" : onlinePosition ? resultFor(game, chess) ? status = resultFor(game, chess) : status = `${chess.turn() === myColor(game) ? "Your move" : `${playerName(game, chess.turn())} to move`}${chess.isCheck() ? " \xB7 Check" : ""}` : status = "This game contains an invalid move." : status = account ? "Challenge a friend or open a game." : "Sign in to play with friends.");
+    } else mode === "online" && (game ? inSetup(game) ? status = "Fog Chess setup" : onlinePosition ? resultFor(game, chess) ? status = resultFor(game, chess) : status = `${chess.turn() === myColor(game) ? "Your move" : `${playerName(game, chess.turn())} to move`}${chess.isCheck() ? " \xB7 Check" : ""}` : status = "This game contains an invalid move." : status = account ? "Online lobby" : "Sign in to play with friends.");
     let statusText = $("game-status");
-    statusText.textContent !== status && statusText.replaceChildren(node2("span", "status-dot"), document.createTextNode(status)), $("new-game").hidden = mode !== "local";
-    let canAct = mode === "local" ? !localOutcome && !local.isGameOver() : isPlaying(game, onlinePosition);
-    $("resign-game").hidden = !canAct, $("resign-game").disabled = moving;
-    let offer = canAct && (mode === "local" ? localDraw : game.draw), canAnswer = offer && (mode === "local" || offer !== myColor(game));
-    $("offer-draw").hidden = !canAct || !!offer, $("offer-draw").disabled = moving, $("draw-panel").hidden = !offer, $("draw-message").textContent = offer ? mode === "local" ? "The other player can accept or decline the draw." : canAnswer ? `${other(game).name} offered a draw.` : "Draw offer sent. Waiting for your opponent." : "", $("accept-draw").hidden = !canAnswer, $("decline-draw").hidden = !canAnswer, $("draw-panel").querySelector(".game-actions").hidden = !canAnswer;
-    let shownGame = mode === "review" ? review.record.game : game, variant = shownGame?.variant, note = variantNotes[variant];
-    if (mode === "local" && arcade && !localOutcome) {
-      note = arcade.message || "A challenge goes to a randomly chosen side after every 3–5 half-moves. The chess clock pauses for each challenge.";
-    }
+    statusText.textContent !== status && statusText.replaceChildren(node2("span", "status-dot"), document.createTextNode(status));
+    const canAct = isPlaying(game, onlinePosition);
+    const canOffer = canAct && !miniPending(game);
+    $("resign-game").hidden = !canOffer;
+    $("resign-game").disabled = moving;
+    const offer = canOffer && game.draw, canAnswer = offer && offer !== myColor(game);
+    $("offer-draw").hidden = !canOffer || !!offer;
+    $("offer-draw").disabled = moving;
+    $("draw-panel").hidden = !offer;
+    $("draw-message").textContent = !offer ? "" : canAnswer ? `${other(game).name} offered a draw.` : "Draw offer sent. Waiting for your opponent.";
+    $("accept-draw").hidden = !canAnswer;
+    $("decline-draw").hidden = !canAnswer;
+    $("draw-panel").querySelector(".game-actions").hidden = !canAnswer;
+    const variant = shownGame?.variant;
+    const note = variant === "minigame" && canAct ? minigameNote(game, chess) : variantNotes[variant];
     $("variant-note").hidden = !note, $("variant-note").textContent = note ?? "", $("setup-panel").hidden = !inSetup(game);
     let last = chess.history({ verbose: !0 }).at(-1);
     $("capture-note").hidden = variant !== "fog" || !last?.captured, $("capture-note").textContent = last?.captured ? `Captured ${pieceNames[last.captured]} on ${last.to}.` : "";
@@ -19572,34 +19537,33 @@ FIREBASE: `));
     presentMinigame();
   }
   function changeMode(next) {
-    mode === "local" && (localOrientation = orientation), mode = next, selected = null, orientation = next === "local" ? localOrientation : currentGame() ? myColor(currentGame()) : "w", syncGame();
+    mode = next, selected = null, orientation = currentGame() ? myColor(currentGame()) : "w", syncGame();
   }
   function syncGame() {
-    let game = currentGame(), moves = game?.state === "active" && !inSetup(game) ? game.moves : null, key = moves ? positionKey(moves, game) : null;
+    let game = currentGame(), moves = game?.state === "active" && !isRoyale(game) && !inSetup(game) ? game.moves : null, key = moves ? positionKey(moves, game) : null;
     key !== lastOnlineMoves && (lastOnlineMoves = key, selected = null, promotionDialog.open && promotionDialog.close(), onlinePosition = moves ? cachedPosition(moves, game) : null), renderGame();
   }
+  function openLobby() {
+    gameId = null;
+    replaceHash("");
+    changeMode("online");
+    goTo("play");
+  }
   function openGame(id, scroll = !0) {
-    goTo("play"), gameId = id, replaceHash(`#game=${id}`), lastOnlineMoves = null, onlinePosition = null, changeMode("online"), scroll && $("game-status").scrollIntoView({ block: "nearest" });
+    goTo("play"), gameId = id, replaceHash(`#game=${id}`), lastOnlineMoves = null, onlinePosition = null, changeMode("online"), scroll && $(isRoyale(currentGame()) ? "royale-room" : "game-status").scrollIntoView({ block: "nearest" });
   }
   async function submitMove(move) {
     let game = currentGame();
     if (!canMove()) return;
-    if (selected = null, mode === "local") {
-      if (arcade && !localLegalMoves(local).some((allowed) => encodeMove(allowed) === encodeMove(move))) return;
-      if (!local.history().length) localStartedAt = Date.now();
-      if (arcade) advanceArcade(move);
-      local.move(move);
-      localDraw = false;
-      if (local.isGameOver()) finishLocal(describe(local));
-      else {
-        scheduleMinigame();
-        rememberLocal();
-        renderGame();
-      }
-      return;
-    }
+    if (!matchLegalMoves(onlinePosition, game).some((allowed) => encodeMove(allowed) === encodeMove(move))) return;
+    const mini = game.variant === "minigame" ? nextMinigame(game, move) : undefined;
+    selected = null;
     let id = gameId;
-    moving = !0, renderGame(), await perform(() => onlineApi.playMove(id, game, encodeMove(move))), moving = !1, renderGame();
+    moving = true;
+    renderGame();
+    await perform(() => onlineApi.playMove(id, game, encodeMove(move), mini));
+    moving = false;
+    renderGame();
   }
   function chooseSquare(square) {
     let game = currentGame();
@@ -19610,7 +19574,7 @@ FIREBASE: `));
     if (!canMove()) return;
     let chess = position();
     if (selected && selected !== square) {
-      let candidates = localLegalMoves(chess, game?.variant).filter((move) => move.from === selected && move.to === square);
+      let candidates = matchLegalMoves(chess, game).filter((move) => move.from === selected && move.to === square);
       if (candidates.length === 1) {
         submitMove(candidates[0]);
         return;
@@ -19650,32 +19614,16 @@ FIREBASE: `));
   $("flip-board").addEventListener("click", () => {
     orientation = orientation === "w" ? "b" : "w", renderBoard();
   });
-  $("new-game").addEventListener("click", () => {
-    startLocalChess();
-  });
   $("resign-game").addEventListener("click", (event) => {
     if (moving || !confirm("Resign this game?")) return;
-    if (mode === "local") {
-      !localOutcome && !local.isGameOver() && finishLocal(`${local.turn() === "w" ? "Black" : "White"} wins by resignation`);
-      return;
-    }
     let game = currentGame();
     isPlaying(game, onlinePosition) && perform(() => onlineApi.saveGame(gameId, { ...game, resigned: account.uid }), event.currentTarget);
   });
   $("offer-draw").addEventListener("click", (event) => {
-    if (mode === "local") {
-      !localOutcome && !local.isGameOver() && (localDraw = !0, rememberLocal(), renderGame());
-      return;
-    }
     let game = currentGame();
     moving || !isPlaying(game, onlinePosition) || game.draw || perform(() => onlineApi.saveGame(gameId, { ...game, draw: myColor(game) }), event.currentTarget);
   });
   function answerDraw(accept, button) {
-    if (mode === "local") {
-      if (!localDraw || localOutcome) return;
-      accept ? finishLocal("Draw \xB7 By agreement") : (localDraw = !1, rememberLocal(), renderGame());
-      return;
-    }
     let game = currentGame();
     if (moving || !isPlaying(game, onlinePosition) || !game.draw || game.draw === myColor(game)) return;
     let next = { ...game };
@@ -19697,6 +19645,7 @@ FIREBASE: `));
     }
     parent.append(section);
   }
+  const shownRoyaleResults = new Set();
   function renderClub() {
     if (updateRating(), renderIdentity(), $("club-lists").replaceChildren(), $("active-list").replaceChildren(), !account) return;
     let known = /* @__PURE__ */ new Map(), requests = [];
@@ -19710,8 +19659,9 @@ FIREBASE: `));
     }
     let challenges = [], gameRows = [];
     for (let [id, record] of Object.entries(games()).reverse()) {
-      let label = `${other(record).name} \xB7 ${record.variant ? variantNames[record.variant] + " \xB7 " : ""}${record.control ?? "Untimed"}`;
-      inSetup(record) || isPlaying(record, cachedPosition(record.moves, record)) ? gameRows.push([label, actionButton("Open game", () => openGame(id), !0)]) : record.state === "pending" && record.to === account.uid ? challenges.push([label, actionButton("Play", async () => {
+      if (isRoyale(record) && resultFor(record)) shownRoyaleResults.add(record.startedAt + ":" + record.from + ":" + record.to);
+      let label = `${other(record).name} \xB7 ${record.variant ? variantNames[record.variant] + " \xB7 " : ""}${record.variant === "royale" ? "5-minute battle" : record.control ?? "Untimed"}`;
+      inSetup(record) || (isRoyale(record) ? !resultFor(record) : isPlaying(record, cachedPosition(record.moves, record))) ? gameRows.push([label, actionButton("Open game", () => openGame(id), !0)]) : record.state === "pending" && record.to === account.uid ? challenges.push([label, actionButton("Play", async () => {
         await onlineApi.acceptGame(id, record), openGame(id);
       }, !0), actionButton("Decline", () => onlineApi.saveGame(id, { ...record, state: "declined" }))]) : record.state === "pending" && challenges.push([`${label} \xB7 Waiting`, actionButton("Cancel", () => onlineApi.saveGame(id, { ...record, state: "canceled" }))]);
     }
@@ -19719,7 +19669,7 @@ FIREBASE: `));
       peer.name,
       actionButton("Profile", () => showFriendProfile(peer)),
       actionButton("Challenge", () => openChallenge(peer), !0)
-    ]), "Add someone by username to get started."), group("Friend requests", requests), group("Game invites", challenges), group("In progress", gameRows, "No active games. Challenge a friend to start.", $("active-list"));
+    ]), "Add someone by username to get started."), group("Friend requests", requests), group("Game invites", challenges), group("In progress", gameRows, undefined, $("active-list"));
   }
   function openChallenge(peer) {
     if (Object.values(games()).some((game) => other(game).uid === peer.uid && game.state === "pending"))
@@ -19728,18 +19678,23 @@ FIREBASE: `));
   }
   for (let control of controls) $("time-control").append(new Option(control, control));
   $("time-control").value = "5+2";
-  $("chess-variant").addEventListener("change", () => {
+  $("chess-variant").addEventListener("change", updateChallengeVariant);
+  function updateChallengeVariant() {
+    const royale = $("chess-variant").value === "royale";
+    $("time-control").hidden = royale;
+    $("time-control-label").hidden = royale;
+    $("challenge-clock-help").hidden = royale;
     let note = variantNotes[$("chess-variant").value];
     $("challenge-variant-note").hidden = !note, $("challenge-variant-note").textContent = note ?? "";
-  });
+  }
   $("cancel-challenge").addEventListener("click", () => $("challenge-dialog").close());
   $("challenge-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     let button = $("send-challenge");
     button.disabled = !0, $("challenge-error").hidden = !0;
-    let peer = challengePeer, control = $("time-control").value, variant = $("chess-variant").value;
+    let peer = challengePeer, variant = $("chess-variant").value, control = variant === "royale" ? "5+0" : $("time-control").value;
     try {
-      waitingForGame = await onlineApi.challenge(account, peer, control, variant), $("challenge-dialog").close(), notify(`Sent a ${variantNames[variant]} ${control} challenge to ${peer.name}.`), openAcceptedChallenge();
+      waitingForGame = await onlineApi.challenge(account, peer, control, variant), $("challenge-dialog").close(), notify(`Sent a ${variantNames[variant]}${variant === "royale" ? "" : " " + control} challenge to ${peer.name}.`), openAcceptedChallenge();
     } catch (error2) {
       $("challenge-error").textContent = messageFor(error2), $("challenge-error").hidden = !1;
     } finally {
@@ -19753,26 +19708,26 @@ FIREBASE: `));
     waitingForGame = null, page === "friends" && game.state === "active" && openGame(id);
   }
   function updateAccount(identity) {
-    if (guest && !identity) return;
-    if (guest) leaveGuest();
     closeMinigame();
     resetRoyale();
-    if (!identity) {
-      arcade = null;
-      localVariant = "classic";
-    }
+    mode = "online";
+    review = null;
+    royaleMatches.clear();
+    shownRoyaleResults.clear();
+    miniResult = null;
     subscriptions.forEach((stop) => stop()), subscriptions = [];
     let hadAccount = !!account;
-    account = identity, $("auth-screen").hidden = !!identity, $("game-screen").hidden = !identity, (identity || hadAccount) && ($("password").value = ""), gameId = null, waitingForGame = null, flagAttempts.clear(), setupAttempts.clear(), fogDrafts.clear(), clockReady = !1, hiddenGames = {}, profile = {}, rating = 200, identity && restoreLocal(), localHistory = identity ? savedLocalHistory() : [];
+    account = identity, $("auth-screen").hidden = !!identity, $("game-screen").hidden = !identity, (identity || hadAccount) && ($("password").value = ""), gameId = null, waitingForGame = null, flagAttempts.clear(), setupAttempts.clear(), fogDrafts.clear(), clockReady = !1, hiddenGames = {}, profile = {}, rating = 200;
     for (let id of ["challenge-dialog", "friend-profile-dialog"]) $(id).open && $(id).close();
     if (goTo("play"), incomingFriends = outgoingFriends = incomingGames = outgoingGames = {}, renderClub(), !identity) {
-      hadAccount && (replaceHash(""), local.reset(), selected = null, localOrientation = "w", orientation = "w", changeMode("local"), configureAuth(!1), $("username").focus());
+      hadAccount && (replaceHash(""), selected = null, orientation = "w", changeMode("online"), configureAuth(!1), $("username").focus());
       return;
     }
-    changeMode(location.hash === "#local" ? "local" : "online");
+    if (location.hash === "#local") replaceHash("");
+    changeMode("online");
     let report = (error2) => notify(messageFor(error2));
     subscriptions.push(onlineApi.watchClock((offset) => {
-      serverOffset = offset, clockReady = !0, tickClocks();
+      serverOffset = offset, clockReady = !0, tickClocks(), renderClub(), renderGame();
     })), subscriptions.push(onlineApi.watchProfile(identity.uid, loadProfile, report)), subscriptions.push(onlineApi.watchHiddenGames(identity.uid, (records) => {
       hiddenGames = records, page === "history" && renderHistory();
     }, report));
@@ -19790,17 +19745,10 @@ FIREBASE: `));
     $("auth-error").textContent = messageFor(error2), $("auth-error").hidden = !1;
   }
   $("account-button").addEventListener("click", (event) => {
-    if (guest) leaveGuest();
-    else if (account) perform(() => onlineApi.leave(), event.currentTarget);
+    if (account) perform(() => onlineApi.leave(), event.currentTarget);
   });
   $("switch-auth").addEventListener("click", () => {
     configureAuth(!creatingAccount), $("username").focus();
-  });
-  $("local-tab").addEventListener("click", () => {
-    replaceHash("#local"), changeMode("local");
-  });
-  $("online-tab").addEventListener("click", () => {
-    replaceHash(gameId ? `#game=${gameId}` : ""), changeMode("online"), $("active-panel").scrollIntoView({ block: "nearest" });
   });
   $("auth-form").addEventListener("submit", async (event) => {
     event.preventDefault();
